@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Vibe & Light</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🕯️ Vibe & Light</h1>
+                <p>Custom Candles & Room Scents</p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Checkout Section -->
+    <section class="container">
+        <h1 class="page-title">Checkout</h1>
+
+        <div class="checkout">
+            <div class="shipping">
+                <h2>Shipping Details</h2>
+                <form onsubmit="return processCheckout()">
+                    <label>Full Name</label>
+                    <input type="text" id="shippingName" required placeholder="Enter your full name">
+
+                    <label>Email</label>
+                    <input type="email" id="shippingEmail" required placeholder="Enter your email">
+
+                    <label>Phone</label>
+                    <input type="tel" id="shippingPhone" required placeholder="Enter your phone number">
+
+                    <label>Address</label>
+                    <textarea id="shippingAddress" required placeholder="Enter your shipping address" rows="3"></textarea>
+
+                    <label>City</label>
+                    <input type="text" id="shippingCity" required placeholder="Enter your city">
+
+                    <label>Postal Code</label>
+                    <input type="text" id="postalCode" required placeholder="Enter postal code">
+
+                    <label>Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select Payment Method</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="debit">Debit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="cash">Cash on Delivery</option>
+                    </select>
+
+                    <label>Amount Being Paid</label>
+                    <input type="number" id="amountPaid" step="0.01" required placeholder="Enter amount">
+
+                    <div style="display: flex; gap: 15px; margin-top: 25px;">
+                        <button type="button" onclick="cancelCheckout()" style="flex: 1; background: #999;">Cancel</button>
+                        <button type="submit" style="flex: 1;">Confirm Order</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="summary">
+                <h2>Order Summary</h2>
+                <div id="orderItems"></div>
+                <p><span>Subtotal:</span> <span id="checkoutSubtotal">$0.00</span></p>
+                <p><span>Discount (10%):</span> <span id="checkoutDiscount">$0.00</span></p>
+                <p><span>Tax (15%):</span> <span id="checkoutTax">$0.00</span></p>
+                <h3><span>Total:</span> <span id="checkoutTotal">$0.00</span></h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Vibe & Light</h3>
+                <p>Creating memorable moments through scent</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="cart.html">Shopping Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:jessicaagoldson@students.utech.edu.jm">jessicaagoldson@students.utech.edu.jm</a></p>
+                <p>&copy; 2025 Vibe & Light. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

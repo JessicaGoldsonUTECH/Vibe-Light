@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Vibe & Light</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🕯️ Vibe & Light</h1>
+                <p>Custom Candles & Room Scents</p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html" class="active">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Register Form -->
+    <div class="form-page">
+        <div class="form-box">
+            <h1>Create Account</h1>
+            <p>Join our community today</p>
+
+            <form onsubmit="return validateRegister()">
+                <label>Full Name</label>
+                <input type="text" id="fullName" required placeholder="Enter your full name">
+                <span class="error" id="nameError"></span>
+
+                <label>Date of Birth</label>
+                <input type="date" id="dob" required>
+                <span class="error" id="dobError"></span>
+
+                <label>Email</label>
+                <input type="email" id="email" required placeholder="Enter your email">
+                <span class="error" id="emailError"></span>
+
+                <label>Username</label>
+                <input type="text" id="regUsername" required placeholder="Choose a username">
+                <span class="error" id="usernameError"></span>
+
+                <label>Password</label>
+                <input type="password" id="regPassword" required placeholder="Create a password">
+                <span class="error" id="passwordError"></span>
+
+                <label>Confirm Password</label>
+                <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+                <span class="error" id="confirmError"></span>
+
+                <button type="submit">Register</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 20px;">
+                Already have an account? <a href="login.html">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Vibe & Light</h3>
+                <p>Creating memorable moments through scent</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="cart.html">Shopping Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:jessicaagoldson@students.utech.edu.jm">jessicaagoldson@students.utech.edu.jm</a></p>
+                <p>&copy; 2025 Vibe & Light. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

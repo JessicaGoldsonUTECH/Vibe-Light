@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse our collection of handcrafted candles and room sprays">
+    <title>Products - Vibe & Light</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🕯️ Vibe & Light</h1>
+                <p>Custom Candles & Room Scents</p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Products Header -->
+    <section class="products-header">
+        <h1>Our Collection</h1>
+        <p>Explore our handcrafted candles and room sprays</p>
+    </section>
+
+    <!-- Candles Section -->
+    <section class="container">
+        <h2 class="category-title">🕯️ Scented Candles</h2>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/lavender_dream.jpg" alt="Lavender Dream Candle">
+                    <span class="badge">Bestseller</span>
+                </div>
+                <div class="product-info">
+                    <h3>Lavender Dream</h3>
+                    <p class="description">Relaxing lavender essential oil perfect for bedtime</p>
+                    <div class="product-footer">
+                        <p class="price">$15.99</p>
+                        <button class="btn-cart" onclick="addToCart('Lavender Dream', 15.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Vanilla_Bliss.jpg" alt="Vanilla Bliss Candle">
+                </div>
+                <div class="product-info">
+                    <h3>Vanilla Bliss</h3>
+                    <p class="description">Sweet vanilla bean for cozy evenings</p>
+                    <div class="product-footer">
+                        <p class="price">$14.99</p>
+                        <button class="btn-cart" onclick="addToCart('Vanilla Bliss', 14.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Ocean_Breeze.jpg" alt="Ocean Breeze Candle">
+                    <span class="badge new">New</span>
+                </div>
+                <div class="product-info">
+                    <h3>Ocean Breeze</h3>
+                    <p class="description">Fresh ocean scent for summer vibes</p>
+                    <div class="product-footer">
+                        <p class="price">$16.99</p>
+                        <button class="btn-cart" onclick="addToCart('Ocean Breeze', 16.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Cinnamon_Spice.jpg" alt="Cinnamon Spice Candle">
+                </div>
+                <div class="product-info">
+                    <h3>Cinnamon Spice</h3>
+                    <p class="description">Warm spice blend for fall season</p>
+                    <div class="product-footer">
+                        <p class="price">$15.99</p>
+                        <button class="btn-cart" onclick="addToCart('Cinnamon Spice', 15.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Rose_Garden.jpg" alt="Rose Garden Candle">
+                </div>
+                <div class="product-info">
+                    <h3>Rose Garden</h3>
+                    <p class="description">Elegant floral scent for romance</p>
+                    <div class="product-footer">
+                        <p class="price">$17.99</p>
+                        <button class="btn-cart" onclick="addToCart('Rose Garden', 17.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Citrus_Burst.jpg" alt="Citrus Burst Candle">
+                </div>
+                <div class="product-info">
+                    <h3>Citrus Burst</h3>
+                    <p class="description">Energizing citrus blend for mornings</p>
+                    <div class="product-footer">
+                        <p class="price">$14.99</p>
+                        <button class="btn-cart" onclick="addToCart('Citrus Burst', 14.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Sprays Section -->
+        <h2 class="category-title">✨ Room Sprays</h2>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Fresh_Linen.jpg" alt="Fresh Linen Room Spray">
+                </div>
+                <div class="product-info">
+                    <h3>Fresh Linen</h3>
+                    <p class="description">Clean and crisp room spray</p>
+                    <div class="product-footer">
+                        <p class="price">$9.99</p>
+                        <button class="btn-cart" onclick="addToCart('Fresh Linen Spray', 9.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Eucalyptus_Mint.jpg" alt="Eucalyptus Mint Room Spray">
+                </div>
+                <div class="product-info">
+                    <h3>Eucalyptus Mint</h3>
+                    <p class="description">Refreshing spa-like fragrance</p>
+                    <div class="product-footer">
+                        <p class="price">$10.99</p>
+                        <button class="btn-cart" onclick="addToCart('Eucalyptus Mint Spray', 10.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Tropical.jpg" alt="Tropical Paradise Room Spray">
+                </div>
+                <div class="product-info">
+                    <h3>Tropical Paradise</h3>
+                    <p class="description">Exotic tropical fruit blend</p>
+                    <div class="product-footer">
+                        <p class="price">$10.99</p>
+                        <button class="btn-cart" onclick="addToCart('Tropical Paradise Spray', 10.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Vibe & Light</h3>
+                <p>Creating memorable moments through scent</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="cart.html">Shopping Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:jessicaagoldson@students.utech.edu.jm">jessicaagoldson@students.utech.edu.jm</a></p>
+                <p>&copy; 2025 Vibe & Light. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

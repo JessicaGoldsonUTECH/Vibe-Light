@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vibe & Light - Custom handcrafted candles and room scents">
+    <title>Vibe & Light - Custom Candles & Room Scents</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🕯️ Vibe & Light</h1>
+                <p>Custom Candles & Room Scents</p>
+            </div>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2>Create Your Perfect Ambiance</h2>
+            <p>Handcrafted candles & room scents made with 100% natural soy wax</p>
+            <a href="products.html" class="btn-primary">Shop Collection</a>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/lavender_dream.jpg" alt="Lavender Dream Candle">
+                    <span class="badge">Bestseller</span>
+                </div>
+                <div class="product-info">
+                    <h3>Lavender Dream</h3>
+                    <p class="description">Calming lavender essential oil</p>
+                    <div class="product-footer">
+                        <p class="price">$15.99</p>
+                        <button class="btn-cart" onclick="addToCart('Lavender Dream', 15.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Vanilla_Bliss.jpg" alt="Vanilla Bliss Candle">
+                    <span class="badge">Popular</span>
+                </div>
+                <div class="product-info">
+                    <h3>Vanilla Bliss</h3>
+                    <p class="description">Sweet vanilla bean aroma</p>
+                    <div class="product-footer">
+                        <p class="price">$14.99</p>
+                        <button class="btn-cart" onclick="addToCart('Vanilla Bliss', 14.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="Assets/Ocean_Breeze.jpg" alt="Ocean Breeze Candle">
+                    <span class="badge new">New</span>
+                </div>
+                <div class="product-info">
+                    <h3>Ocean Breeze</h3>
+                    <p class="description">Fresh coastal scent</p>
+                    <div class="product-footer">
+                        <p class="price">$16.99</p>
+                        <button class="btn-cart" onclick="addToCart('Ocean Breeze', 16.99)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Vibe & Light?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Custom Scents</h3>
+                    <p>Create your own unique fragrance combinations tailored to your preferences</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌿</div>
+                    <h3>Natural Ingredients</h3>
+                    <p>100% soy wax and pure essential oils - no harmful chemicals</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">♻️</div>
+                    <h3>Eco-Friendly</h3>
+                    <p>Sustainable practices and fully recyclable packaging</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✋</div>
+                    <h3>Handcrafted</h3>
+                    <p>Every candle is carefully made by hand with love and attention</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Space?</h2>
+            <p>Discover our full collection of handcrafted candles and room scents</p>
+            <a href="products.html" class="btn-primary">View All Products</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Vibe & Light</h3>
+                <p>Creating memorable moments through scent</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="cart.html">Shopping Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:jessicaagoldson@students.utech.edu.jm">jessicaagoldson@students.utech.edu.jm</a></p>
+                <p>&copy; 2025 Vibe & Light. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
