@@ -18,6 +18,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="products.html">Products</a></li>
                 <li><a href="cart.html">Cart</a></li>
+                <li><a href="invoice-history.html">Invoices</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="login.html">Login</a></li>
                 <li><a href="register.html">Register</a></li>
@@ -51,14 +52,48 @@
                     <label>Postal Code</label>
                     <input type="text" id="postalCode" required placeholder="Enter postal code">
 
+                    <h2 style="margin-top: 30px; color: #6B3410;">Payment Information</h2>
+                    
                     <label>Payment Method</label>
-                    <select id="paymentMethod" required>
+                    <select id="paymentMethod" required onchange="togglePaymentFields()">
                         <option value="">Select Payment Method</option>
                         <option value="credit">Credit Card</option>
                         <option value="debit">Debit Card</option>
                         <option value="paypal">PayPal</option>
                         <option value="cash">Cash on Delivery</option>
                     </select>
+
+                    <!-- Payment Credentials Section -->
+                    <div id="cardCredentials" style="display: none;">
+                        <label>Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+
+                        <label>Cardholder Name</label>
+                        <input type="text" id="cardholderName" placeholder="Name on card">
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label>Expiry Date</label>
+                                <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div>
+                                <label>CVV</label>
+                                <input type="text" id="cvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="paypalCredentials" style="display: none;">
+                        <label>PayPal Email</label>
+                        <input type="email" id="paypalEmail" placeholder="your.email@example.com">
+
+                        <label>PayPal Password</label>
+                        <input type="password" id="paypalPassword" placeholder="Enter PayPal password">
+                    </div>
+
+                    <div id="cashMessage" style="display: none; background: #FFF8DC; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <p style="margin: 0; color: #6B3410;"><strong>Cash on Delivery:</strong> You will pay when your order is delivered.</p>
+                    </div>
 
                     <label>Amount Being Paid</label>
                     <input type="number" id="amountPaid" step="0.01" required placeholder="Enter amount">
@@ -77,6 +112,12 @@
                 <p><span>Discount (10%):</span> <span id="checkoutDiscount">$0.00</span></p>
                 <p><span>Tax (15%):</span> <span id="checkoutTax">$0.00</span></p>
                 <h3><span>Total:</span> <span id="checkoutTotal">$0.00</span></h3>
+
+                <!-- Security Badge -->
+                <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 30px; margin-bottom: 10px;">🔒</div>
+                    <p style="margin: 0; font-size: 14px; color: #666;">Your payment information is secure and encrypted</p>
+                </div>
             </div>
         </div>
     </section>
@@ -94,6 +135,7 @@
                     <li><a href="products.html">Products</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="cart.html">Shopping Cart</a></li>
+                    <li><a href="invoice-history.html">Invoice History</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -105,5 +147,67 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Toggle payment credential fields based on selected method
+        function togglePaymentFields() {
+            var method = document.getElementById('paymentMethod').value;
+            var cardFields = document.getElementById('cardCredentials');
+            var paypalFields = document.getElementById('paypalCredentials');
+            var cashMessage = document.getElementById('cashMessage');
+            
+            // Hide all fields first
+            cardFields.style.display = 'none';
+            paypalFields.style.display = 'none';
+            cashMessage.style.display = 'none';
+            
+            // Clear required attributes
+            document.getElementById('cardNumber').removeAttribute('required');
+            document.getElementById('cardholderName').removeAttribute('required');
+            document.getElementById('expiryDate').removeAttribute('required');
+            document.getElementById('cvv').removeAttribute('required');
+            document.getElementById('paypalEmail').removeAttribute('required');
+            document.getElementById('paypalPassword').removeAttribute('required');
+            
+            // Show relevant fields
+            if (method === 'credit' || method === 'debit') {
+                cardFields.style.display = 'block';
+                document.getElementById('cardNumber').setAttribute('required', 'required');
+                document.getElementById('cardholderName').setAttribute('required', 'required');
+                document.getElementById('expiryDate').setAttribute('required', 'required');
+                document.getElementById('cvv').setAttribute('required', 'required');
+            } else if (method === 'paypal') {
+                paypalFields.style.display = 'block';
+                document.getElementById('paypalEmail').setAttribute('required', 'required');
+                document.getElementById('paypalPassword').setAttribute('required', 'required');
+            } else if (method === 'cash') {
+                cashMessage.style.display = 'block';
+            }
+        }
+
+        // Format card number with spaces
+        document.addEventListener('DOMContentLoaded', function() {
+            var cardInput = document.getElementById('cardNumber');
+            if (cardInput) {
+                cardInput.addEventListener('input', function(e) {
+                    var value = e.target.value.replace(/\s/g, '');
+                    var formatted = value.match(/.{1,4}/g);
+                    e.target.value = formatted ? formatted.join(' ') : value;
+                });
+            }
+
+            // Format expiry date
+            var expiryInput = document.getElementById('expiryDate');
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function(e) {
+                    var value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    } else {
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
