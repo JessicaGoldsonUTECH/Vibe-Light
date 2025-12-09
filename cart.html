@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Vibe & Light</title>
+    <title>Shopping Cart - Vibe & Light</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="products.html">Products</a></li>
-                <li><a href="cart.html">Cart</a></li>
+                <li><a href="cart.html" class="active">Cart</a></li>
                 <li><a href="invoice-history.html">Invoices</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="login.html">Login</a></li>
@@ -26,98 +26,35 @@
         </div>
     </nav>
 
-    <!-- Checkout Section -->
+    <!-- Cart Section -->
     <section class="container">
-        <h1 class="page-title">Checkout</h1>
+        <h1 class="page-title">Shopping Cart</h1>
 
-        <div class="checkout">
-            <div class="shipping">
-                <h2>Shipping Details</h2>
-                <form onsubmit="return processCheckout()">
-                    <label>Full Name</label>
-                    <input type="text" id="shippingName" required placeholder="Enter your full name">
+        <table id="cartTable">
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </table>
 
-                    <label>Email</label>
-                    <input type="email" id="shippingEmail" required placeholder="Enter your email">
+        <div id="emptyMessage">
+            <p>Your cart is empty</p>
+            <a href="products.html" class="btn-primary">Continue Shopping</a>
+        </div>
 
-                    <label>Phone</label>
-                    <input type="tel" id="shippingPhone" required placeholder="Enter your phone number">
+        <div id="cartSummary" style="display:none;">
+            <h2>Order Summary</h2>
+            <p><span>Subtotal:</span> <span id="subtotal">$0.00</span></p>
+            <p><span>Discount (10%):</span> <span id="discount">$0.00</span></p>
+            <p><span>Tax (15%):</span> <span id="tax">$0.00</span></p>
+            <h3><span>Total:</span> <span id="total">$0.00</span></h3>
 
-                    <label>Address</label>
-                    <textarea id="shippingAddress" required placeholder="Enter your shipping address" rows="3"></textarea>
-
-                    <label>City</label>
-                    <input type="text" id="shippingCity" required placeholder="Enter your city">
-
-                    <label>Postal Code</label>
-                    <input type="text" id="postalCode" required placeholder="Enter postal code">
-
-                    <h2 style="margin-top: 30px; color: #6B3410;">Payment Information</h2>
-                    
-                    <label>Payment Method</label>
-                    <select id="paymentMethod" required onchange="togglePaymentFields()">
-                        <option value="">Select Payment Method</option>
-                        <option value="credit">Credit Card</option>
-                        <option value="debit">Debit Card</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="cash">Cash on Delivery</option>
-                    </select>
-
-                    <!-- Payment Credentials Section -->
-                    <div id="cardCredentials" style="display: none;">
-                        <label>Card Number</label>
-                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-
-                        <label>Cardholder Name</label>
-                        <input type="text" id="cardholderName" placeholder="Name on card">
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label>Expiry Date</label>
-                                <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
-                            </div>
-                            <div>
-                                <label>CVV</label>
-                                <input type="text" id="cvv" placeholder="123" maxlength="3">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="paypalCredentials" style="display: none;">
-                        <label>PayPal Email</label>
-                        <input type="email" id="paypalEmail" placeholder="your.email@example.com">
-
-                        <label>PayPal Password</label>
-                        <input type="password" id="paypalPassword" placeholder="Enter PayPal password">
-                    </div>
-
-                    <div id="cashMessage" style="display: none; background: #FFF8DC; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        <p style="margin: 0; color: #6B3410;"><strong>Cash on Delivery:</strong> You will pay when your order is delivered.</p>
-                    </div>
-
-                    <label>Amount Being Paid</label>
-                    <input type="number" id="amountPaid" step="0.01" required placeholder="Enter amount">
-
-                    <div style="display: flex; gap: 15px; margin-top: 25px;">
-                        <button type="button" onclick="cancelCheckout()" style="flex: 1; background: #999;">Cancel</button>
-                        <button type="submit" style="flex: 1;">Confirm Order</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="summary">
-                <h2>Order Summary</h2>
-                <div id="orderItems"></div>
-                <p><span>Subtotal:</span> <span id="checkoutSubtotal">$0.00</span></p>
-                <p><span>Discount (10%):</span> <span id="checkoutDiscount">$0.00</span></p>
-                <p><span>Tax (15%):</span> <span id="checkoutTax">$0.00</span></p>
-                <h3><span>Total:</span> <span id="checkoutTotal">$0.00</span></h3>
-
-                <!-- Security Badge -->
-                <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 30px; margin-bottom: 10px;">🔒</div>
-                    <p style="margin: 0; font-size: 14px; color: #666;">Your payment information is secure and encrypted</p>
-                </div>
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="clearCart()" style="flex: 1; background: #999;">Clear All</button>
+                <button onclick="proceedToCheckout()" class="btn-primary" style="flex: 1;">Proceed to Checkout</button>
             </div>
         </div>
     </section>
@@ -148,66 +85,21 @@
 
     <script src="script.js"></script>
     <script>
-        // Toggle payment credential fields based on selected method
-        function togglePaymentFields() {
-            var method = document.getElementById('paymentMethod').value;
-            var cardFields = document.getElementById('cardCredentials');
-            var paypalFields = document.getElementById('paypalCredentials');
-            var cashMessage = document.getElementById('cashMessage');
-            
-            // Hide all fields first
-            cardFields.style.display = 'none';
-            paypalFields.style.display = 'none';
-            cashMessage.style.display = 'none';
-            
-            // Clear required attributes
-            document.getElementById('cardNumber').removeAttribute('required');
-            document.getElementById('cardholderName').removeAttribute('required');
-            document.getElementById('expiryDate').removeAttribute('required');
-            document.getElementById('cvv').removeAttribute('required');
-            document.getElementById('paypalEmail').removeAttribute('required');
-            document.getElementById('paypalPassword').removeAttribute('required');
-            
-            // Show relevant fields
-            if (method === 'credit' || method === 'debit') {
-                cardFields.style.display = 'block';
-                document.getElementById('cardNumber').setAttribute('required', 'required');
-                document.getElementById('cardholderName').setAttribute('required', 'required');
-                document.getElementById('expiryDate').setAttribute('required', 'required');
-                document.getElementById('cvv').setAttribute('required', 'required');
-            } else if (method === 'paypal') {
-                paypalFields.style.display = 'block';
-                document.getElementById('paypalEmail').setAttribute('required', 'required');
-                document.getElementById('paypalPassword').setAttribute('required', 'required');
-            } else if (method === 'cash') {
-                cashMessage.style.display = 'block';
+        // Load and display cart when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+            showCart();
+        });
+
+        function proceedToCheckout() {
+            if (!currentUser) {
+                if (confirm('You need to login or register to proceed to checkout. Would you like to login now?')) {
+                    window.location.href = 'login.html';
+                }
+            } else {
+                window.location.href = 'checkout.html';
             }
         }
-
-        // Format card number with spaces
-        document.addEventListener('DOMContentLoaded', function() {
-            var cardInput = document.getElementById('cardNumber');
-            if (cardInput) {
-                cardInput.addEventListener('input', function(e) {
-                    var value = e.target.value.replace(/\s/g, '');
-                    var formatted = value.match(/.{1,4}/g);
-                    e.target.value = formatted ? formatted.join(' ') : value;
-                });
-            }
-
-            // Format expiry date
-            var expiryInput = document.getElementById('expiryDate');
-            if (expiryInput) {
-                expiryInput.addEventListener('input', function(e) {
-                    var value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 2) {
-                        e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                    } else {
-                        e.target.value = value;
-                    }
-                });
-            }
-        });
     </script>
 </body>
 </html>
