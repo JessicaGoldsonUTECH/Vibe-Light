@@ -1,13 +1,20 @@
 // IA#2: JavaScript for Vibe & Light E-Commerce
 // Student: Jessica Goldson | ID: 2405416
+// GROUP PROJECT: Extended for CIT2011 Group Assignment
 
 // IA#2: Cart array to store products
 var cart = [];
 var currentUser = null;
 var invoices = [];
 
+// GROUP PROJECT: Variables
+var loginAttempts = 0;
+const MAX_LOGIN_ATTEMPTS = 3;
+var allProducts = [];
+
 // IA#2: Load data when page loads
 window.onload = function() {
+    loadProductsFromLocalStorage(); // GROUP PROJECT: Load products first
     loadCart();
     loadCurrentUser();
     loadInvoices();
@@ -15,6 +22,11 @@ window.onload = function() {
     showCheckout();
     displayInvoiceHistory();
     updateUIForAuth();
+    
+    // GROUP PROJECT: Display products dynamically if on products page
+    if (document.querySelector('.products-grid')) {
+        displayProducts();
+    }
 };
 
 // ===================================
@@ -83,11 +95,569 @@ function checkAuthForCheckout() {
 }
 
 // ===================================
-// IA#2: CART FUNCTIONS
+// GROUP PROJECT: EXTENDED AUTHENTICATION FUNCTIONS
 // ===================================
 
-// IA#2: Function to add product to cart
+// Load registered users from localStorage
+function loadRegisteredUsers() {
+    var saved = localStorage.getItem('RegistrationData');
+    return saved ? JSON.parse(saved) : [];
+}
+
+// Save registered users to localStorage
+function saveRegisteredUsers(users) {
+    localStorage.setItem('RegistrationData', JSON.stringify(users));
+}
+
+// Calculate age from date of birth
+function calculateAge(dob) {
+    var birthDate = new Date(dob);
+    var today = new Date();
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+
+// Validate TRN format (000-000-000)
+function validateTRN(trn) {
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    return trnPattern.test(trn);
+}
+
+// Check if TRN is unique
+function isTRNUnique(trn) {
+    var users = loadRegisteredUsers();
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].trn === trn) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Reset password function
+function resetPassword() {
+    var trn = prompt('Enter your TRN to reset password:');
+    
+    if (!trn) return;
+    
+    if (!validateTRN(trn)) {
+        alert('Invalid TRN format. Must be 000-000-000');
+        return;
+    }
+    
+    var users = loadRegisteredUsers();
+    var userFound = false;
+    
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].trn === trn) {
+            userFound = true;
+            var newPassword = prompt('Enter new password (minimum 8 characters):');
+            
+            if (newPassword && newPassword.length >= 8) {
+                var confirmPassword = prompt('Confirm new password:');
+                
+                if (newPassword === confirmPassword) {
+                    users[i].password = newPassword;
+                    saveRegisteredUsers(users);
+                    alert('Password reset successful!');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Passwords do not match!');
+                }
+            } else {
+                alert('Password must be at least 8 characters!');
+            }
+            break;
+        }
+    }
+    
+    if (!userFound) {
+        alert('TRN not found in our records!');
+    }
+}
+
+// Cancel registration form
+function cancelRegistration() {
+    if (confirm('Clear all form data?')) {
+        document.getElementById('registrationForm').reset();
+    }
+}
+
+// Cancel login form
+function cancelLogin() {
+    if (confirm('Clear login form?')) {
+        document.getElementById('loginForm').reset();
+    }
+}
+
+// ===================================
+// GROUP PROJECT: UPDATED REGISTRATION FUNCTION
+// ===================================
+
+// IA#2: Validate register form - UPDATED FOR GROUP PROJECT
+function validateRegister() {
+    // GROUP PROJECT: Get all input values
+    var firstName = document.getElementById('firstName') ? document.getElementById('firstName').value : '';
+    var lastName = document.getElementById('lastName') ? document.getElementById('lastName').value : '';
+    var dob = document.getElementById('dob') ? document.getElementById('dob').value : '';
+    var gender = document.getElementById('gender') ? document.getElementById('gender').value : '';
+    var phone = document.getElementById('phone') ? document.getElementById('phone').value : '';
+    var email = document.getElementById('email') ? document.getElementById('email').value : '';
+    var trn = document.getElementById('trn') ? document.getElementById('trn').value : '';
+    var password = document.getElementById('regPassword') ? document.getElementById('regPassword').value : '';
+    var confirmPassword = document.getElementById('confirmPassword') ? document.getElementById('confirmPassword').value : '';
+    
+    // For backward compatibility with IA#2 form
+    if (!firstName) {
+        var name = document.getElementById('fullName') ? document.getElementById('fullName').value : '';
+        if (name) {
+            var nameParts = name.split(' ');
+            firstName = nameParts[0] || '';
+            lastName = nameParts.slice(1).join(' ') || '';
+        }
+    }
+    
+    if (!trn) {
+        trn = document.getElementById('regUsername') ? document.getElementById('regUsername').value : '';
+    }
+    
+    // Clear all errors
+    var errorElements = document.querySelectorAll('.error');
+    errorElements.forEach(function(element) {
+        element.textContent = '';
+    });
+    
+    var valid = true;
+    
+    // GROUP PROJECT: Validate first name
+    if (firstName === '') {
+        var errorEl = document.getElementById('firstNameError') || document.getElementById('nameError');
+        if (errorEl) errorEl.textContent = 'First name required';
+        valid = false;
+    }
+    
+    // GROUP PROJECT: Validate last name
+    if (lastName === '') {
+        var errorEl = document.getElementById('lastNameError');
+        if (errorEl) errorEl.textContent = 'Last name required';
+        valid = false;
+    }
+    
+    // GROUP PROJECT: Validate date of birth
+    if (dob === '') {
+        var errorEl = document.getElementById('dobError');
+        if (errorEl) errorEl.textContent = 'Date of birth required';
+        valid = false;
+    } else {
+        var age = calculateAge(dob);
+        if (age < 18) {
+            var errorEl = document.getElementById('dobError');
+            if (errorEl) errorEl.textContent = 'Must be 18 years or older';
+            valid = false;
+        }
+    }
+    
+    // GROUP PROJECT: Validate gender
+    if (gender === '' && document.getElementById('gender')) {
+        var errorEl = document.getElementById('genderError');
+        if (errorEl) errorEl.textContent = 'Gender required';
+        valid = false;
+    }
+    
+    // GROUP PROJECT: Validate phone
+    if (phone === '' && document.getElementById('phone')) {
+        var errorEl = document.getElementById('phoneError');
+        if (errorEl) errorEl.textContent = 'Phone number required';
+        valid = false;
+    }
+    
+    // IA#2: Validate email format
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        var errorEl = document.getElementById('emailError');
+        if (errorEl) errorEl.textContent = 'Valid email required';
+        valid = false;
+    }
+    
+    // GROUP PROJECT: Validate TRN format
+    if (!validateTRN(trn)) {
+        var errorEl = document.getElementById('trnError') || document.getElementById('usernameError');
+        if (errorEl) errorEl.textContent = 'TRN must be in format 000-000-000';
+        valid = false;
+    } else if (!isTRNUnique(trn)) {
+        var errorEl = document.getElementById('trnError') || document.getElementById('usernameError');
+        if (errorEl) errorEl.textContent = 'TRN already registered';
+        valid = false;
+    }
+    
+    // GROUP PROJECT: Validate password length
+    if (password.length < 8) {
+        var errorEl = document.getElementById('passwordError');
+        if (errorEl) errorEl.textContent = 'Password must be at least 8 characters';
+        valid = false;
+    }
+    
+    // IA#2: Check passwords match
+    if (password !== confirmPassword) {
+        var errorEl = document.getElementById('confirmError');
+        if (errorEl) errorEl.textContent = 'Passwords do not match';
+        valid = false;
+    }
+    
+    // If valid, register user
+    if (valid) {
+        // Get existing users
+        var users = loadRegisteredUsers();
+        
+        // Create user object for GROUP PROJECT
+        var newUser = {
+            firstName: firstName,
+            lastName: lastName,
+            fullName: firstName + ' ' + lastName,
+            dob: dob,
+            age: calculateAge(dob),
+            gender: gender,
+            phone: phone,
+            email: email,
+            trn: trn,
+            password: password,
+            dateRegistered: new Date().toLocaleDateString(),
+            cart: [],
+            invoices: [],
+            username: trn // Use TRN as username
+        };
+        
+        // For backward compatibility with IA#2
+        var ia2User = {
+            fullName: firstName + ' ' + lastName,
+            dob: dob,
+            email: email,
+            username: trn,
+            password: password
+        };
+        
+        // Add to users array
+        users.push(newUser);
+        saveRegisteredUsers(users);
+        
+        // Also save to IA#2 format for backward compatibility
+        var ia2Users = localStorage.getItem('registeredUsers');
+        var ia2UsersList = ia2Users ? JSON.parse(ia2Users) : [];
+        ia2UsersList.push(ia2User);
+        localStorage.setItem('registeredUsers', JSON.stringify(ia2UsersList));
+        
+        alert('Registration successful! Welcome ' + firstName + ' ' + lastName);
+        window.location.href = 'login.html';
+    }
+    
+    return false;
+}
+
+// ===================================
+// GROUP PROJECT: UPDATED LOGIN FUNCTION
+// ===================================
+
+// IA#2: Validate login form - UPDATED FOR GROUP PROJECT
+function validateLogin() {
+    // GROUP PROJECT: Get TRN as username
+    var trn = document.getElementById('username') ? document.getElementById('username').value : '';
+    var password = document.getElementById('password') ? document.getElementById('password').value : '';
+    
+    // Clear errors
+    var usernameError = document.getElementById('usernameError');
+    var passwordError = document.getElementById('passwordError');
+    if (usernameError) usernameError.textContent = '';
+    if (passwordError) passwordError.textContent = '';
+    
+    var valid = true;
+    
+    // GROUP PROJECT: Validate TRN format
+    if (!validateTRN(trn)) {
+        if (usernameError) usernameError.textContent = 'TRN must be in format 000-000-000';
+        valid = false;
+    }
+    
+    // IA#2: Check password
+    if (password === '') {
+        if (passwordError) passwordError.textContent = 'Password required';
+        valid = false;
+    }
+    
+    if (valid) {
+        // Check login attempts from localStorage
+        var storedAttempts = localStorage.getItem('loginAttempts_' + trn);
+        if (storedAttempts) {
+            loginAttempts = parseInt(storedAttempts);
+        }
+        
+        // Check if account is locked
+        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            alert('Account locked! Too many failed attempts. Please reset your password.');
+            window.location.href = 'account-locked.html';
+            return false;
+        }
+        
+        // GROUP PROJECT: Try to find user in RegistrationData
+        var users = loadRegisteredUsers();
+        var foundUser = null;
+        
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].trn === trn && users[i].password === password) {
+                foundUser = users[i];
+                break;
+            }
+        }
+        
+        // For backward compatibility with IA#2 users
+        if (!foundUser) {
+            var ia2Users = localStorage.getItem('registeredUsers');
+            var ia2UsersList = ia2Users ? JSON.parse(ia2Users) : [];
+            
+            for (var i = 0; i < ia2UsersList.length; i++) {
+                if (ia2UsersList[i].username === trn && ia2UsersList[i].password === password) {
+                    foundUser = ia2UsersList[i];
+                    // Convert to GROUP PROJECT format
+                    foundUser = {
+                        fullName: foundUser.fullName,
+                        email: foundUser.email,
+                        trn: foundUser.username,
+                        password: foundUser.password,
+                        username: foundUser.username
+                    };
+                    break;
+                }
+            }
+        }
+        
+        if (foundUser) {
+            // Reset login attempts
+            loginAttempts = 0;
+            localStorage.removeItem('loginAttempts_' + trn);
+            
+            // Set current user
+            currentUser = {
+                username: foundUser.trn || foundUser.username,
+                fullName: foundUser.fullName,
+                email: foundUser.email,
+                trn: foundUser.trn || foundUser.username
+            };
+            saveCurrentUser();
+            
+            // Load user's cart
+            loadCart();
+            
+            alert('Login successful! Welcome ' + (foundUser.firstName || foundUser.fullName));
+            window.location.href = 'index.html';
+        } else {
+            // Increment login attempts
+            loginAttempts++;
+            localStorage.setItem('loginAttempts_' + trn, loginAttempts);
+            
+            var attemptsLeft = MAX_LOGIN_ATTEMPTS - loginAttempts;
+            if (attemptsLeft > 0) {
+                alert('Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.');
+            } else {
+                alert('Account locked! Too many failed attempts.');
+                window.location.href = 'account-locked.html';
+            }
+        }
+    }
+    
+    return false;
+}
+
+// ===================================
+// GROUP PROJECT: PRODUCT CATALOGUE FUNCTIONS
+// ===================================
+
+// Initialize products array
+function initializeProducts() {
+    allProducts = [
+        {
+            name: 'Lavender Dream',
+            price: 15.99,
+            description: 'Relaxing lavender essential oil perfect for bedtime',
+            image: 'Assets/lavender_dream.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Vanilla Bliss',
+            price: 14.99,
+            description: 'Sweet vanilla bean for cozy evenings',
+            image: 'Assets/Vanilla_Bliss.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Ocean Breeze',
+            price: 16.99,
+            description: 'Fresh ocean scent for summer vibes',
+            image: 'Assets/Ocean_Breeze.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Cinnamon Spice',
+            price: 15.99,
+            description: 'Warm spice blend for fall season',
+            image: 'Assets/Cinnamon_Spice.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Rose Garden',
+            price: 17.99,
+            description: 'Elegant floral scent for romance',
+            image: 'Assets/Rose_Garden.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Citrus Burst',
+            price: 14.99,
+            description: 'Energizing citrus blend for mornings',
+            image: 'Assets/Citrus_Burst.jpg',
+            category: 'candle'
+        },
+        {
+            name: 'Fresh Linen Spray',
+            price: 9.99,
+            description: 'Clean and crisp room spray',
+            image: 'Assets/Fresh_Linen.jpg',
+            category: 'spray'
+        },
+        {
+            name: 'Eucalyptus Mint Spray',
+            price: 10.99,
+            description: 'Refreshing spa-like fragrance',
+            image: 'Assets/Eucalyptus_Mint.jpg',
+            category: 'spray'
+        },
+        {
+            name: 'Tropical Paradise Spray',
+            price: 10.99,
+            description: 'Exotic tropical fruit blend',
+            image: 'Assets/Tropical.jpg',
+            category: 'spray'
+        }
+    ];
+}
+
+// Save products to localStorage
+function saveProductsToLocalStorage() {
+    localStorage.setItem('AllProducts', JSON.stringify(allProducts));
+}
+
+// Load products from localStorage
+function loadProductsFromLocalStorage() {
+    var saved = localStorage.getItem('AllProducts');
+    if (saved) {
+        allProducts = JSON.parse(saved);
+    } else {
+        // Initialize with default products if none exist
+        initializeProducts();
+        saveProductsToLocalStorage();
+    }
+}
+
+// Display products dynamically
+function displayProducts() {
+    var candlesGrid = document.getElementById('candlesGrid');
+    var spraysGrid = document.getElementById('spraysGrid');
+    var productsGrid = document.querySelector('.products-grid:not([id])');
+    
+    // If using dynamic grids (candlesGrid and spraysGrid)
+    if (candlesGrid && spraysGrid) {
+        // Clear existing content
+        candlesGrid.innerHTML = '';
+        spraysGrid.innerHTML = '';
+        
+        // Display candles
+        allProducts.forEach(function(product) {
+            if (product.category === 'candle') {
+                var productCard = createProductCard(product);
+                candlesGrid.appendChild(productCard);
+            }
+        });
+        
+        // Display sprays
+        allProducts.forEach(function(product) {
+            if (product.category === 'spray') {
+                var productCard = createProductCard(product);
+                spraysGrid.appendChild(productCard);
+            }
+        });
+    } 
+    // If using single products grid (for backward compatibility)
+    else if (productsGrid) {
+        productsGrid.innerHTML = '';
+        
+        allProducts.forEach(function(product) {
+            var productCard = createProductCard(product);
+            productsGrid.appendChild(productCard);
+        });
+    }
+}
+
+// Create product card HTML
+function createProductCard(product) {
+    var card = document.createElement('div');
+    card.className = 'product-card';
+    
+    var badge = '';
+    if (product.name === 'Lavender Dream') {
+        badge = '<span class="badge">Bestseller</span>';
+    } else if (product.name === 'Ocean Breeze') {
+        badge = '<span class="badge new">New</span>';
+    } else if (product.name === 'Vanilla Bliss') {
+        badge = '<span class="badge">Popular</span>';
+    }
+    
+    card.innerHTML = `
+        <div class="product-image">
+            <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Product+Image'">
+            ${badge}
+        </div>
+        <div class="product-info">
+            <h3>${product.name}</h3>
+            <p class="description">${product.description}</p>
+            <div class="product-footer">
+                <p class="price">$${product.price.toFixed(2)}</p>
+                <button class="btn-cart" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+// ===================================
+// IA#2: CART FUNCTIONS (UPDATED FOR GROUP PROJECT)
+// ===================================
+
+// IA#2: Function to add product to cart - UPDATED FOR GROUP PROJECT
 function addToCart(name, price) {
+    // GROUP PROJECT: Find product details
+    var product = null;
+    for (var i = 0; i < allProducts.length; i++) {
+        if (allProducts[i].name === name) {
+            product = allProducts[i];
+            break;
+        }
+    }
+    
+    // For backward compatibility
+    if (!product) {
+        product = {
+            name: name,
+            price: price,
+            description: '',
+            image: '',
+            category: ''
+        };
+    }
+    
     // IA#2: Check if product already in cart
     var found = false;
     for (var i = 0; i < cart.length; i++) {
@@ -101,8 +671,11 @@ function addToCart(name, price) {
     // IA#2: If not found, add new product
     if (!found) {
         cart.push({
-            name: name,
-            price: price,
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            image: product.image,
+            category: product.category,
             quantity: 1
         });
     }
@@ -142,29 +715,46 @@ function clearCart() {
     }
 }
 
-// IA#2: Save cart to localStorage - USER SPECIFIC
+// IA#2: Save cart to localStorage - USER SPECIFIC (UPDATED FOR GROUP PROJECT)
 function saveCart() {
     if (currentUser) {
-        // Save cart with username as key
-        localStorage.setItem('cart_' + currentUser.username, JSON.stringify(cart));
+        // Save cart with username/TRN as key
+        var key = 'cart_' + (currentUser.trn || currentUser.username);
+        localStorage.setItem(key, JSON.stringify(cart));
+        
+        // Also update user's cart in RegistrationData
+        var users = loadRegisteredUsers();
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].trn === (currentUser.trn || currentUser.username)) {
+                users[i].cart = cart;
+                saveRegisteredUsers(users);
+                break;
+            }
+        }
     } else {
-        // Guest cart (cleared on logout)
         localStorage.setItem('cart_guest', JSON.stringify(cart));
     }
 }
 
-// IA#2: Load cart from localStorage - USER SPECIFIC
+// IA#2: Load cart from localStorage - USER SPECIFIC (UPDATED FOR GROUP PROJECT)
 function loadCart() {
     if (currentUser) {
-        // Load user-specific cart
-        var saved = localStorage.getItem('cart_' + currentUser.username);
+        // Try to load from user's RegistrationData first
+        var users = loadRegisteredUsers();
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].trn === (currentUser.trn || currentUser.username)) {
+                cart = users[i].cart || [];
+                break;
+            }
+        }
+        
+        // Also load from localStorage for backward compatibility
+        var key = 'cart_' + (currentUser.trn || currentUser.username);
+        var saved = localStorage.getItem(key);
         if (saved) {
             cart = JSON.parse(saved);
-        } else {
-            cart = [];
         }
     } else {
-        // Load guest cart
         var saved = localStorage.getItem('cart_guest');
         if (saved) {
             cart = JSON.parse(saved);
@@ -194,13 +784,13 @@ function showCart() {
     
     // IA#2: Check if cart is empty
     if (cart.length === 0) {
-        empty.style.display = 'block';
-        summary.style.display = 'none';
+        if (empty) empty.style.display = 'block';
+        if (summary) summary.style.display = 'none';
         return;
     }
     
-    empty.style.display = 'none';
-    summary.style.display = 'block';
+    if (empty) empty.style.display = 'none';
+    if (summary) summary.style.display = 'block';
     
     // IA#2: Calculate totals
     var subtotal = 0;
@@ -226,10 +816,15 @@ function showCart() {
     var total = subtotal - discount + tax;
     
     // IA#2: Update summary
-    document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-    document.getElementById('discount').textContent = '$' + discount.toFixed(2);
-    document.getElementById('tax').textContent = '$' + tax.toFixed(2);
-    document.getElementById('total').textContent = '$' + total.toFixed(2);
+    var subtotalEl = document.getElementById('subtotal');
+    var discountEl = document.getElementById('discount');
+    var taxEl = document.getElementById('tax');
+    var totalEl = document.getElementById('total');
+    
+    if (subtotalEl) subtotalEl.textContent = '$' + subtotal.toFixed(2);
+    if (discountEl) discountEl.textContent = '$' + discount.toFixed(2);
+    if (taxEl) taxEl.textContent = '$' + tax.toFixed(2);
+    if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
 }
 
 // ===================================
@@ -268,10 +863,15 @@ function showCheckout() {
     var total = subtotal - discount + tax;
     
     // IA#2: Update checkout totals
-    document.getElementById('checkoutSubtotal').textContent = '$' + subtotal.toFixed(2);
-    document.getElementById('checkoutDiscount').textContent = '$' + discount.toFixed(2);
-    document.getElementById('checkoutTax').textContent = '$' + tax.toFixed(2);
-    document.getElementById('checkoutTotal').textContent = '$' + total.toFixed(2);
+    var checkoutSubtotal = document.getElementById('checkoutSubtotal');
+    var checkoutDiscount = document.getElementById('checkoutDiscount');
+    var checkoutTax = document.getElementById('checkoutTax');
+    var checkoutTotal = document.getElementById('checkoutTotal');
+    
+    if (checkoutSubtotal) checkoutSubtotal.textContent = '$' + subtotal.toFixed(2);
+    if (checkoutDiscount) checkoutDiscount.textContent = '$' + discount.toFixed(2);
+    if (checkoutTax) checkoutTax.textContent = '$' + tax.toFixed(2);
+    if (checkoutTotal) checkoutTotal.textContent = '$' + total.toFixed(2);
     
     // IA#2: Set amount field
     var amountField = document.getElementById('amountPaid');
@@ -286,157 +886,6 @@ function showCheckout() {
         if (nameField && currentUser.fullName) nameField.value = currentUser.fullName;
         if (emailField && currentUser.email) emailField.value = currentUser.email;
     }
-}
-
-// ===================================
-// IA#2: FORM VALIDATION
-// ===================================
-
-// IA#2: Validate login form
-function validateLogin() {
-    // IA#2: Get input values
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
-    
-    // IA#2: Clear errors
-    document.getElementById('usernameError').textContent = '';
-    document.getElementById('passwordError').textContent = '';
-    
-    var valid = true;
-    
-    // IA#2: Check username
-    if (username === '') {
-        document.getElementById('usernameError').textContent = 'Username required';
-        valid = false;
-    }
-    
-    // IA#2: Check password
-    if (password === '') {
-        document.getElementById('passwordError').textContent = 'Password required';
-        valid = false;
-    }
-    
-    // IA#2: If valid, login
-    if (valid) {
-        // Get registered users
-        var users = localStorage.getItem('registeredUsers');
-        var usersList = users ? JSON.parse(users) : [];
-        
-        // Find user
-        var foundUser = null;
-        for (var i = 0; i < usersList.length; i++) {
-            if (usersList[i].username === username && usersList[i].password === password) {
-                foundUser = usersList[i];
-                break;
-            }
-        }
-        
-        if (foundUser) {
-            currentUser = foundUser;
-            saveCurrentUser();
-            alert('Login successful! Welcome ' + username);
-            window.location.href = 'index.html';
-        } else {
-            alert('Invalid username or password!');
-        }
-    }
-    
-    return false;
-}
-
-// IA#2: Validate register form
-function validateRegister() {
-    // IA#2: Get input values
-    var name = document.getElementById('fullName').value;
-    var dob = document.getElementById('dob').value;
-    var email = document.getElementById('email').value;
-    var username = document.getElementById('regUsername').value;
-    var password = document.getElementById('regPassword').value;
-    var confirm = document.getElementById('confirmPassword').value;
-    
-    // IA#2: Clear errors
-    document.getElementById('nameError').textContent = '';
-    document.getElementById('dobError').textContent = '';
-    document.getElementById('emailError').textContent = '';
-    document.getElementById('usernameError').textContent = '';
-    document.getElementById('passwordError').textContent = '';
-    document.getElementById('confirmError').textContent = '';
-    
-    var valid = true;
-    
-    // IA#2: Validate name
-    if (name === '') {
-        document.getElementById('nameError').textContent = 'Name required';
-        valid = false;
-    }
-    
-    // IA#2: Validate DOB
-    if (dob === '') {
-        document.getElementById('dobError').textContent = 'Date of birth required';
-        valid = false;
-    }
-    
-    // IA#2: Validate email format
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        document.getElementById('emailError').textContent = 'Valid email required';
-        valid = false;
-    }
-    
-    // IA#2: Validate username
-    if (username === '') {
-        document.getElementById('usernameError').textContent = 'Username required';
-        valid = false;
-    }
-    
-    // IA#2: Validate password length
-    if (password.length < 6) {
-        document.getElementById('passwordError').textContent = 'Password must be 6+ characters';
-        valid = false;
-    }
-    
-    // IA#2: Check passwords match
-    if (password !== confirm) {
-        document.getElementById('confirmError').textContent = 'Passwords do not match';
-        valid = false;
-    }
-    
-    // IA#2: If valid, register
-    if (valid) {
-        // Get existing users
-        var users = localStorage.getItem('registeredUsers');
-        var usersList = users ? JSON.parse(users) : [];
-        
-        // Check if username exists
-        var exists = false;
-        for (var i = 0; i < usersList.length; i++) {
-            if (usersList[i].username === username) {
-                exists = true;
-                break;
-            }
-        }
-        
-        if (exists) {
-            alert('Username already exists!');
-            return false;
-        }
-        
-        // Add new user
-        var newUser = {
-            fullName: name,
-            dob: dob,
-            email: email,
-            username: username,
-            password: password
-        };
-        usersList.push(newUser);
-        localStorage.setItem('registeredUsers', JSON.stringify(usersList));
-        
-        alert('Registration successful! Welcome ' + name);
-        window.location.href = 'login.html';
-    }
-    
-    return false;
 }
 
 // ===================================
@@ -527,7 +976,8 @@ function processCheckout() {
         amountPaid: amount,
         change: amount - total,
         paymentMethod: paymentMethod,
-        username: currentUser.username
+        username: currentUser.username,
+        trn: currentUser.trn || currentUser.username // GROUP PROJECT: Add TRN
     };
     
     // IA#2: Confirm order
@@ -535,6 +985,17 @@ function processCheckout() {
         // Save invoice first
         invoices.push(invoice);
         saveInvoices();
+        
+        // GROUP PROJECT: Also save invoice to user's RegistrationData
+        var users = loadRegisteredUsers();
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].trn === (currentUser.trn || currentUser.username)) {
+                if (!users[i].invoices) users[i].invoices = [];
+                users[i].invoices.push(invoice);
+                saveRegisteredUsers(users);
+                break;
+            }
+        }
         
         // IMPORTANT: Clear cart immediately after saving invoice
         cart = [];
@@ -587,6 +1048,7 @@ function printInvoice(invoice) {
     html += '<p><strong>Invoice Number:</strong> ' + invoice.invoiceNumber + '</p>';
     html += '<p><strong>Date:</strong> ' + invoice.date + '</p>';
     html += '<p><strong>Payment Method:</strong> ' + invoice.paymentMethod + '</p>';
+    html += '<p><strong>TRN:</strong> ' + (invoice.trn || 'N/A') + '</p>'; // GROUP PROJECT: Add TRN
     html += '</div>';
     
     html += '<div class="info-section">';
@@ -652,7 +1114,7 @@ function displayInvoiceHistory() {
     // Filter invoices for current user
     var userInvoices = [];
     for (var i = 0; i < invoices.length; i++) {
-        if (invoices[i].username === currentUser.username) {
+        if (invoices[i].username === currentUser.username || invoices[i].trn === (currentUser.trn || currentUser.username)) {
             userInvoices.push(invoices[i]);
         }
     }
