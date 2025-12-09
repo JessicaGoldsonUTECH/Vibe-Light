@@ -31,16 +31,25 @@
             <h1>Welcome Back</h1>
             <p>Login to your account</p>
 
-            <form onsubmit="return validateLogin()">
-                <label>Username</label>
-                <input type="text" id="username" required placeholder="Enter your username">
+            <form id="loginForm" onsubmit="return validateLogin()">
+                <label>Tax Registration Number (TRN)</label>
+                <input type="text" id="username" required placeholder="000-000-000" pattern="\d{3}-\d{3}-\d{3}">
+                <small style="display: block; margin-top: -10px; margin-bottom: 15px; color: #666;">Use your TRN as username</small>
                 <span class="error" id="usernameError"></span>
 
                 <label>Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
                 <span class="error" id="passwordError"></span>
 
-                <button type="submit">Login</button>
+                <!-- GROUP PROJECT: Added password reset link -->
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="#" onclick="resetPassword(); return false;" style="font-size: 14px; color: #D2691E;">Forgot Password?</a>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="button" onclick="cancelLogin()" style="flex: 1; background: #999;">Cancel</button>
+                    <button type="submit" style="flex: 1;">Login</button>
+                </div>
             </form>
 
             <p style="text-align: center; margin-top: 20px;">
