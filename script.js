@@ -746,7 +746,7 @@ function showCart() {
         var itemTotal = item.price * item.quantity;
         subtotal = subtotal + itemTotal;
         
-        // IA#2: Create table row
+        // IA#2: Create table row - FIXED: Added remove button column
         var row = table.insertRow();
         row.innerHTML = '<td>' + item.name + '</td>' +
                        '<td>$' + item.price.toFixed(2) + '</td>' +
@@ -1100,4 +1100,5 @@ function proceedToCheckout() {
         window.location.href = 'checkout.html';
     }
 }
+
 
