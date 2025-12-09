@@ -1038,3 +1038,93 @@ footer a:hover {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+
+
+/* ====================================
+   ACCOUNT LOCKED PAGE STYLES
+   ==================================== */
+
+.locked-icon {
+    font-size: 80px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #d32f2f;
+}
+
+.locked-message {
+    background: linear-gradient(135deg, #FFE4E6, #FFCDD2);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 25px 0;
+    text-align: center;
+    border-left: 4px solid #d32f2f;
+}
+
+.locked-message p {
+    margin: 10px 0;
+    color: #666;
+    font-size: 15px;
+}
+
+.form-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6B3410 0%, #8B4513 100%);
+    color: #ffffff;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(107, 52, 16, 0.4);
+    text-align: center;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(107, 52, 16, 0.6);
+}
+
+.btn-home {
+    background: linear-gradient(135deg, #999 0%, #666 100%);
+    color: #ffffff;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.btn-home:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Update form-box for better spacing */
+.form-box h1[style*="color: #d32f2f"] {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.form-box p {
+    text-align: center;
+    color: #777;
+    margin-bottom: 20px;
+}
+
