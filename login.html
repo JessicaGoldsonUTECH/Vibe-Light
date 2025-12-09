@@ -31,27 +31,26 @@
             <h1>Welcome Back</h1>
             <p>Login to your account</p>
 
-            <form id="loginForm" onsubmit="return validateLogin()">
+            <form id="loginForm">
                 <label>Tax Registration Number (TRN)</label>
-                <input type="text" id="username" required placeholder="000-000-000" pattern="\d{3}-\d{3}-\d{3}">
-                <span class="form-hint">Use your TRN as username</span>
-                <span class="error" id="usernameError"></span>
+                <input type="text" id="trn" required placeholder="Enter your TRN (000-000-000)">
+                <span class="error" id="trnError"></span>
 
                 <label>Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
                 <span class="error" id="passwordError"></span>
 
-                <div class="form-options">
-                    <a href="#" onclick="resetPassword(); return false;" class="forgot-password">Forgot Password?</a>
-                </div>
+                <p style="text-align: center; margin: 10px 0;">
+                    <a href="#" onclick="resetPassword()">Reset Password</a>
+                </p>
 
-                <div class="form-buttons">
-                    <button type="button" onclick="cancelLogin()" class="btn-secondary">Cancel</button>
-                    <button type="submit" class="btn-primary">Login</button>
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button type="button" onclick="clearLoginForm()" style="flex: 1; background: #999;">Cancel</button>
+                    <button type="submit" style="flex: 1;">Login</button>
                 </div>
             </form>
 
-            <p class="form-footer">
+            <p style="text-align: center; margin-top: 20px;">
                 Don't have an account? <a href="register.html">Register here</a>
             </p>
         </div>
@@ -81,5 +80,10 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        document.getElementById('loginForm').onsubmit = function() {
+            return validateLogin();
+        };
+    </script>
 </body>
 </html>
