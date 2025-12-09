@@ -1,111 +1,79 @@
 // IA#2: JavaScript for Vibe & Light E-Commerce
 // Student: Jessica Goldson | ID: 2405416
-// GROUP PROJECT: Extended for CIT2011 Group Assignment
 
-// IA#2: Cart array to store products
-var cart = [];
+// ===================================
+// Question 1: USER AUTHENTICATION FUNCTIONS
+// ===================================
+
+// Question 1.a: Registration Data Storage
+var RegistrationData = [];
 var currentUser = null;
+var cart = [];
 var invoices = [];
+var AllProducts = [];
+var AllInvoices = [];
+var loginAttempts = {};
 
-// GROUP PROJECT: Variables
-var loginAttempts = 0;
-const MAX_LOGIN_ATTEMPTS = 3;
-
-// GROUP PROJECT: Product array for localStorage
-var allProducts = [
-    {
-        name: 'Lavender Dream',
-        price: 15.99,
-        description: 'Relaxing lavender essential oil perfect for bedtime',
-        image: 'Assets/lavender_dream.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Vanilla Bliss',
-        price: 14.99,
-        description: 'Sweet vanilla bean for cozy evenings',
-        image: 'Assets/Vanilla_Bliss.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Ocean Breeze',
-        price: 16.99,
-        description: 'Fresh ocean scent for summer vibes',
-        image: 'Assets/Ocean_Breeze.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Cinnamon Spice',
-        price: 15.99,
-        description: 'Warm spice blend for fall season',
-        image: 'Assets/Cinnamon_Spice.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Rose Garden',
-        price: 17.99,
-        description: 'Elegant floral scent for romance',
-        image: 'Assets/Rose_Garden.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Citrus Burst',
-        price: 14.99,
-        description: 'Energizing citrus blend for mornings',
-        image: 'Assets/Citrus_Burst.jpg',
-        category: 'candle'
-    },
-    {
-        name: 'Fresh Linen Spray',  // CHANGED: Added "Spray"
-        price: 9.99,
-        description: 'Clean and crisp room spray',
-        image: 'Assets/Fresh_Linen.jpg',
-        category: 'spray'
-    },
-    {
-        name: 'Eucalyptus Mint Spray',  // CHANGED: Added "Spray"
-        price: 10.99,
-        description: 'Refreshing spa-like fragrance',
-        image: 'Assets/Eucalyptus_Mint.jpg',
-        category: 'spray'
-    },
-    {
-        name: 'Tropical Paradise Spray',  // CHANGED: Added "Spray"
-        price: 10.99,
-        description: 'Exotic tropical fruit blend',
-        image: 'Assets/Tropical.jpg',
-        category: 'spray'
-    }
-];
-
-// IA#2: Load data when page loads
+// Question 1.a.ii: Load all data when page loads
 window.onload = function() {
-    loadProductsToLocalStorage(); // GROUP PROJECT: Load/save products
-    loadCart();
+    loadRegistrationData();
     loadCurrentUser();
+    loadCart();
     loadInvoices();
+    loadAllProducts();
+    loadAllInvoices();
     showCart();
     showCheckout();
     displayInvoiceHistory();
     updateUIForAuth();
+    
+    // Initialize products if empty
+    if (AllProducts.length === 0) {
+        initializeProducts();
+    }
+    
+    // Display products dynamically
+    displayProducts();
 };
 
-// ===================================
-// GROUP PROJECT: PRODUCT FUNCTIONS
-// ===================================
-
-// Save products to localStorage as AllProducts
-function loadProductsToLocalStorage() {
-    var saved = localStorage.getItem('AllProducts');
-    if (!saved) {
-        // First time: save the initial products
-        localStorage.setItem('AllProducts', JSON.stringify(allProducts));
+// Question 1.a.ii: Load Registration Data from localStorage
+function loadRegistrationData() {
+    var saved = localStorage.getItem('RegistrationData');
+    if (saved) {
+        RegistrationData = JSON.parse(saved);
     }
 }
 
-// ===================================
-// IA#2: AUTHENTICATION FUNCTIONS
-// ===================================
+// Question 1.a.ii: Save Registration Data to localStorage
+function saveRegistrationData() {
+    localStorage.setItem('RegistrationData', JSON.stringify(RegistrationData));
+}
+
+// Question 1.a.ii: Load All Products from localStorage
+function loadAllProducts() {
+    var saved = localStorage.getItem('AllProducts');
+    if (saved) {
+        AllProducts = JSON.parse(saved);
+    }
+}
+
+// Question 1.a.ii: Save All Products to localStorage
+function saveAllProducts() {
+    localStorage.setItem('AllProducts', JSON.stringify(AllProducts));
+}
+
+// Question 1.a.ii: Load All Invoices from localStorage
+function loadAllInvoices() {
+    var saved = localStorage.getItem('AllInvoices');
+    if (saved) {
+        AllInvoices = JSON.parse(saved);
+    }
+}
+
+// Question 1.a.ii: Save All Invoices to localStorage
+function saveAllInvoices() {
+    localStorage.setItem('AllInvoices', JSON.stringify(AllInvoices));
+}
 
 // Load current user from localStorage
 function loadCurrentUser() {
@@ -124,6 +92,19 @@ function saveCurrentUser() {
     }
 }
 
+// Load invoices from localStorage
+function loadInvoices() {
+    var saved = localStorage.getItem('invoices');
+    if (saved) {
+        invoices = JSON.parse(saved);
+    }
+}
+
+// Save invoices to localStorage
+function saveInvoices() {
+    localStorage.setItem('invoices', JSON.stringify(invoices));
+}
+
 // Update UI based on authentication status
 function updateUIForAuth() {
     var navLinks = document.querySelector('nav ul');
@@ -135,7 +116,7 @@ function updateUIForAuth() {
     if (currentUser) {
         // User is logged in
         if (loginLink) {
-            loginLink.textContent = 'Logout (' + currentUser.username + ')';
+            loginLink.textContent = 'Logout (' + currentUser.firstName + ')';
             loginLink.href = '#';
             loginLink.onclick = function() {
                 logout();
@@ -145,6 +126,28 @@ function updateUIForAuth() {
         if (registerLink) {
             registerLink.style.display = 'none';
         }
+    }
+}
+
+// Question 1.a.viii: Cancel button for registration form
+function clearRegisterForm() {
+    if (confirm('Clear all form data?')) {
+        document.getElementById('registerForm').reset();
+        // Clear all error messages
+        var errors = document.getElementsByClassName('error');
+        for (var i = 0; i < errors.length; i++) {
+            errors[i].textContent = '';
+        }
+    }
+}
+
+// Question 1.b.v: Cancel button for login form
+function clearLoginForm() {
+    if (confirm('Clear login form?')) {
+        document.getElementById('loginForm').reset();
+        // Clear error messages
+        document.getElementById('trnError').textContent = '';
+        document.getElementById('passwordError').textContent = '';
     }
 }
 
@@ -169,263 +172,161 @@ function checkAuthForCheckout() {
 }
 
 // ===================================
-// GROUP PROJECT: EXTENDED AUTHENTICATION FUNCTIONS
+// Question 1.a: REGISTRATION VALIDATION
 // ===================================
 
-// Load registered users from localStorage
-function loadRegisteredUsers() {
-    var saved = localStorage.getItem('RegistrationData');
-    return saved ? JSON.parse(saved) : [];
-}
-
-// Save registered users to localStorage
-function saveRegisteredUsers(users) {
-    localStorage.setItem('RegistrationData', JSON.stringify(users));
-}
-
-// Calculate age from date of birth
-function calculateAge(dob) {
-    var birthDate = new Date(dob);
-    var today = new Date();
-    var age = today.getFullYear() - birthDate.getFullYear();
-    var monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-    return age;
-}
-
-// Validate TRN format (000-000-000)
-function validateTRN(trn) {
-    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
-    return trnPattern.test(trn);
-}
-
-// Check if TRN is unique
-function isTRNUnique(trn) {
-    var users = loadRegisteredUsers();
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].trn === trn) {
-            return false;
-        }
-    }
-    return true;
-}
-
-// Reset password function
-function resetPassword() {
-    var trn = prompt('Enter your TRN to reset password:');
-    
-    if (!trn) return;
-    
-    if (!validateTRN(trn)) {
-        alert('Invalid TRN format. Must be 000-000-000');
-        return;
-    }
-    
-    var users = loadRegisteredUsers();
-    var userFound = false;
-    
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].trn === trn) {
-            userFound = true;
-            var newPassword = prompt('Enter new password (minimum 8 characters):');
-            
-            if (newPassword && newPassword.length >= 8) {
-                var confirmPassword = prompt('Confirm new password:');
-                
-                if (newPassword === confirmPassword) {
-                    users[i].password = newPassword;
-                    saveRegisteredUsers(users);
-                    alert('Password reset successful!');
-                    window.location.href = 'login.html';
-                } else {
-                    alert('Passwords do not match!');
-                }
-            } else {
-                alert('Password must be at least 8 characters!');
-            }
-            break;
-        }
-    }
-    
-    if (!userFound) {
-        alert('TRN not found in our records!');
-    }
-}
-
-// Cancel registration form
-function cancelRegistration() {
-    if (confirm('Clear all form data?')) {
-        var form = document.getElementById('registrationForm');
-        if (form) form.reset();
-    }
-}
-
-// Cancel login form
-function cancelLogin() {
-    if (confirm('Clear login form?')) {
-        var form = document.getElementById('loginForm');
-        if (form) form.reset();
-    }
-}
-
-// ===================================
-// GROUP PROJECT: UPDATED REGISTRATION FUNCTION
-// ===================================
-
-// IA#2: Validate register form - UPDATED FOR GROUP PROJECT
+// Question 1.a.ii: Validate register form
 function validateRegister() {
-    // GROUP PROJECT: Get all input values
-    var firstName = document.getElementById('firstName') ? document.getElementById('firstName').value : '';
-    var lastName = document.getElementById('lastName') ? document.getElementById('lastName').value : '';
-    var dob = document.getElementById('dob') ? document.getElementById('dob').value : '';
-    var gender = document.getElementById('gender') ? document.getElementById('gender').value : '';
-    var phone = document.getElementById('phone') ? document.getElementById('phone').value : '';
-    var email = document.getElementById('email') ? document.getElementById('email').value : '';
-    var trn = document.getElementById('trn') ? document.getElementById('trn').value : '';
-    var password = document.getElementById('regPassword') ? document.getElementById('regPassword').value : '';
-    var confirmPassword = document.getElementById('confirmPassword') ? document.getElementById('confirmPassword').value : '';
+    // Get input values
+    var firstName = document.getElementById('firstName').value.trim();
+    var lastName = document.getElementById('lastName').value.trim();
+    var dob = document.getElementById('dob').value;
+    var gender = document.getElementById('gender').value;
+    var phone = document.getElementById('phone').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var trn = document.getElementById('trn').value.trim();
+    var password = document.getElementById('regPassword').value;
+    var confirm = document.getElementById('confirmPassword').value;
     
-    // For backward compatibility with IA#2 form
-    if (!firstName) {
-        var name = document.getElementById('fullName') ? document.getElementById('fullName').value : '';
-        if (name) {
-            var nameParts = name.split(' ');
-            firstName = nameParts[0] || '';
-            lastName = nameParts.slice(1).join(' ') || '';
-        }
-    }
-    
-    if (!trn) {
-        trn = document.getElementById('regUsername') ? document.getElementById('regUsername').value : '';
-    }
-    
-    // Clear all errors
-    var errorElements = document.querySelectorAll('.error');
-    for (var i = 0; i < errorElements.length; i++) {
-        errorElements[i].textContent = '';
-    }
+    // Clear errors
+    document.getElementById('firstNameError').textContent = '';
+    document.getElementById('lastNameError').textContent = '';
+    document.getElementById('dobError').textContent = '';
+    document.getElementById('genderError').textContent = '';
+    document.getElementById('phoneError').textContent = '';
+    document.getElementById('emailError').textContent = '';
+    document.getElementById('trnError').textContent = '';
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('confirmError').textContent = '';
     
     var valid = true;
     
-    // GROUP PROJECT: Validate first name
+    // Question 1.a.ii.iii: Validate all fields are filled
     if (firstName === '') {
-        var errorEl = document.getElementById('firstNameError') || document.getElementById('nameError');
-        if (errorEl) errorEl.textContent = 'First name required';
+        document.getElementById('firstNameError').textContent = 'First name required';
         valid = false;
     }
     
-    // GROUP PROJECT: Validate last name
     if (lastName === '') {
-        var errorEl = document.getElementById('lastNameError');
-        if (errorEl) errorEl.textContent = 'Last name required';
+        document.getElementById('lastNameError').textContent = 'Last name required';
         valid = false;
     }
     
-    // GROUP PROJECT: Validate date of birth
     if (dob === '') {
-        var errorEl = document.getElementById('dobError');
-        if (errorEl) errorEl.textContent = 'Date of birth required';
+        document.getElementById('dobError').textContent = 'Date of birth required';
         valid = false;
-    } else {
-        var age = calculateAge(dob);
+    }
+    
+    if (gender === '') {
+        document.getElementById('genderError').textContent = 'Gender required';
+        valid = false;
+    }
+    
+    if (phone === '') {
+        document.getElementById('phoneError').textContent = 'Phone number required';
+        valid = false;
+    }
+    
+    if (email === '') {
+        document.getElementById('emailError').textContent = 'Email required';
+        valid = false;
+    }
+    
+    if (trn === '') {
+        document.getElementById('trnError').textContent = 'TRN required';
+        valid = false;
+    }
+    
+    if (password === '') {
+        document.getElementById('passwordError').textContent = 'Password required';
+        valid = false;
+    }
+    
+    if (confirm === '') {
+        document.getElementById('confirmError').textContent = 'Confirm password required';
+        valid = false;
+    }
+    
+    // Question 1.a.ii.iv: Validate password length (8+ characters)
+    if (password.length < 8) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 8 characters long';
+        valid = false;
+    }
+    
+    // Question 1.a.ii.v: Calculate age - must be over 18
+    if (dob !== '') {
+        var birthDate = new Date(dob);
+        var today = new Date();
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        
         if (age < 18) {
-            var errorEl = document.getElementById('dobError');
-            if (errorEl) errorEl.textContent = 'Must be 18 years or older';
+            document.getElementById('dobError').textContent = 'You must be at least 18 years old to register';
             valid = false;
         }
     }
     
-    // GROUP PROJECT: Validate gender
-    if (gender === '' && document.getElementById('gender')) {
-        var errorEl = document.getElementById('genderError');
-        if (errorEl) errorEl.textContent = 'Gender required';
+    // Question 1.a.ii.v: Validate TRN format (000-000-000)
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (!trnPattern.test(trn)) {
+        document.getElementById('trnError').textContent = 'TRN must be in format 000-000-000';
         valid = false;
     }
     
-    // GROUP PROJECT: Validate phone
-    if (phone === '' && document.getElementById('phone')) {
-        var errorEl = document.getElementById('phoneError');
-        if (errorEl) errorEl.textContent = 'Phone number required';
+    // Check passwords match
+    if (password !== confirm) {
+        document.getElementById('confirmError').textContent = 'Passwords do not match';
         valid = false;
     }
     
-    // IA#2: Validate email format
+    // Validate email format
     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        var errorEl = document.getElementById('emailError');
-        if (errorEl) errorEl.textContent = 'Valid email required';
-        valid = false;
-    }
-    
-    // GROUP PROJECT: Validate TRN format
-    if (!validateTRN(trn)) {
-        var errorEl = document.getElementById('trnError') || document.getElementById('usernameError');
-        if (errorEl) errorEl.textContent = 'TRN must be in format 000-000-000';
-        valid = false;
-    } else if (!isTRNUnique(trn)) {
-        var errorEl = document.getElementById('trnError') || document.getElementById('usernameError');
-        if (errorEl) errorEl.textContent = 'TRN already registered';
-        valid = false;
-    }
-    
-    // GROUP PROJECT: Validate password length
-    if (password.length < 8) {
-        var errorEl = document.getElementById('passwordError');
-        if (errorEl) errorEl.textContent = 'Password must be at least 8 characters';
-        valid = false;
-    }
-    
-    // IA#2: Check passwords match
-    if (password !== confirmPassword) {
-        var errorEl = document.getElementById('confirmError');
-        if (errorEl) errorEl.textContent = 'Passwords do not match';
+        document.getElementById('emailError').textContent = 'Valid email required';
         valid = false;
     }
     
     // If valid, register user
     if (valid) {
-        // Get existing users
-        var users = loadRegisteredUsers();
+        // Check if TRN already exists
+        var trnExists = false;
+        for (var i = 0; i < RegistrationData.length; i++) {
+            if (RegistrationData[i].trn === trn) {
+                trnExists = true;
+                break;
+            }
+        }
         
-        // Create user object for GROUP PROJECT
+        if (trnExists) {
+            alert('TRN already registered! Please use a different TRN.');
+            document.getElementById('trnError').textContent = 'TRN already registered';
+            return false;
+        }
+        
+        // Question 1.a.ii.vi: Create registration record as JavaScript object
         var newUser = {
             firstName: firstName,
             lastName: lastName,
-            fullName: firstName + ' ' + lastName,
             dob: dob,
-            age: calculateAge(dob),
             gender: gender,
             phone: phone,
             email: email,
             trn: trn,
             password: password,
-            dateRegistered: new Date().toLocaleDateString(),
+            dateOfRegistration: new Date().toLocaleString(),
             cart: [],
-            invoices: [],
-            username: trn // Use TRN as username
+            invoices: []
         };
         
-        // For backward compatibility with IA#2
-        var ia2User = {
-            fullName: firstName + ' ' + lastName,
-            dob: dob,
-            email: email,
-            username: trn,
-            password: password
-        };
+        // Question 1.a.ii.vi: Append to RegistrationData array
+        RegistrationData.push(newUser);
         
-        // Add to users array
-        users.push(newUser);
-        saveRegisteredUsers(users);
-        
-        // Also save to IA#2 format for backward compatibility
-        var ia2Users = localStorage.getItem('registeredUsers');
-        var ia2UsersList = ia2Users ? JSON.parse(ia2Users) : [];
-        ia2UsersList.push(ia2User);
-        localStorage.setItem('registeredUsers', JSON.stringify(ia2UsersList));
+        // Question 1.a.ii.vi: Store in localStorage
+        saveRegistrationData();
         
         alert('Registration successful! Welcome ' + firstName + ' ' + lastName);
         window.location.href = 'login.html';
@@ -435,108 +336,84 @@ function validateRegister() {
 }
 
 // ===================================
-// GROUP PROJECT: UPDATED LOGIN FUNCTION
+// Question 1.b: LOGIN VALIDATION
 // ===================================
 
-// IA#2: Validate login form - UPDATED FOR GROUP PROJECT
+// Question 1.b.ii: Validate login form
 function validateLogin() {
-    // GROUP PROJECT: Get TRN as username
-    var trn = document.getElementById('username') ? document.getElementById('username').value : '';
-    var password = document.getElementById('password') ? document.getElementById('password').value : '';
+    var trn = document.getElementById('trn').value.trim();
+    var password = document.getElementById('password').value;
     
     // Clear errors
-    var usernameError = document.getElementById('usernameError');
-    var passwordError = document.getElementById('passwordError');
-    if (usernameError) usernameError.textContent = '';
-    if (passwordError) passwordError.textContent = '';
+    document.getElementById('trnError').textContent = '';
+    document.getElementById('passwordError').textContent = '';
     
     var valid = true;
     
-    // GROUP PROJECT: Validate TRN format
-    if (!validateTRN(trn)) {
-        if (usernameError) usernameError.textContent = 'TRN must be in format 000-000-000';
+    // Check TRN format
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (!trnPattern.test(trn)) {
+        document.getElementById('trnError').textContent = 'TRN must be in format 000-000-000';
         valid = false;
     }
     
-    // IA#2: Check password
     if (password === '') {
-        if (passwordError) passwordError.textContent = 'Password required';
+        document.getElementById('passwordError').textContent = 'Password required';
         valid = false;
     }
     
+    // Question 1.b.iii: Check login attempts
+    if (!loginAttempts[trn]) {
+        loginAttempts[trn] = { count: 0, lastAttempt: Date.now() };
+    }
+    
+    // Reset attempts if more than 15 minutes have passed
+    var timeSinceLastAttempt = Date.now() - loginAttempts[trn].lastAttempt;
+    if (timeSinceLastAttempt > 15 * 60 * 1000) { // 15 minutes
+        loginAttempts[trn].count = 0;
+    }
+    
+    // Check if account is locked
+    if (loginAttempts[trn].count >= 3) {
+        alert('Account locked! Too many failed attempts. Please try again later.');
+        window.location.href = 'account-locked.html';
+        return false;
+    }
+    
+    // If valid, check credentials
     if (valid) {
-        // Check login attempts from localStorage
-        var storedAttempts = localStorage.getItem('loginAttempts_' + trn);
-        if (storedAttempts) {
-            loginAttempts = parseInt(storedAttempts);
-        }
-        
-        // Check if account is locked
-        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            alert('Account locked! Too many failed attempts. Please reset your password.');
-            window.location.href = 'account-locked.html';
-            return false;
-        }
-        
-        // GROUP PROJECT: Try to find user in RegistrationData
-        var users = loadRegisteredUsers();
         var foundUser = null;
         
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].trn === trn && users[i].password === password) {
-                foundUser = users[i];
+        // Find user by TRN and password
+        for (var i = 0; i < RegistrationData.length; i++) {
+            if (RegistrationData[i].trn === trn && RegistrationData[i].password === password) {
+                foundUser = RegistrationData[i];
                 break;
             }
         }
         
-        // For backward compatibility with IA#2 users
-        if (!foundUser) {
-            var ia2Users = localStorage.getItem('registeredUsers');
-            var ia2UsersList = ia2Users ? JSON.parse(ia2Users) : [];
-            
-            for (var i = 0; i < ia2UsersList.length; i++) {
-                if (ia2UsersList[i].username === trn && ia2UsersList[i].password === password) {
-                    foundUser = ia2UsersList[i];
-                    // Convert to GROUP PROJECT format
-                    foundUser = {
-                        fullName: foundUser.fullName,
-                        email: foundUser.email,
-                        trn: foundUser.username,
-                        password: foundUser.password,
-                        username: foundUser.username
-                    };
-                    break;
-                }
-            }
-        }
-        
         if (foundUser) {
-            // Reset login attempts
-            loginAttempts = 0;
-            localStorage.removeItem('loginAttempts_' + trn);
+            // Reset login attempts on successful login
+            loginAttempts[trn].count = 0;
             
-            // Set current user
-            currentUser = {
-                username: foundUser.trn || foundUser.username,
-                fullName: foundUser.fullName,
-                email: foundUser.email,
-                trn: foundUser.trn || foundUser.username
-            };
+            currentUser = foundUser;
             saveCurrentUser();
             
             // Load user's cart
-            loadCart();
+            cart = currentUser.cart || [];
+            saveCart();
             
-            alert('Login successful! Welcome ' + (foundUser.firstName || foundUser.fullName));
-            window.location.href = 'index.html';
+            alert('Login successful! Welcome ' + foundUser.firstName);
+            window.location.href = 'products.html';
         } else {
-            // Increment login attempts
-            loginAttempts++;
-            localStorage.setItem('loginAttempts_' + trn, loginAttempts);
+            // Increment failed attempts
+            loginAttempts[trn].count++;
+            loginAttempts[trn].lastAttempt = Date.now();
             
-            var attemptsLeft = MAX_LOGIN_ATTEMPTS - loginAttempts;
+            var attemptsLeft = 3 - loginAttempts[trn].count;
+            
             if (attemptsLeft > 0) {
-                alert('Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.');
+                alert('Invalid TRN or password! ' + attemptsLeft + ' attempts remaining.');
             } else {
                 alert('Account locked! Too many failed attempts.');
                 window.location.href = 'account-locked.html';
@@ -547,13 +424,174 @@ function validateLogin() {
     return false;
 }
 
+// Question 1.b.vi: Reset Password function
+function resetPassword() {
+    var trn = prompt('Enter your TRN to reset password:');
+    
+    if (!trn) return;
+    
+    // Find user by TRN
+    var userIndex = -1;
+    for (var i = 0; i < RegistrationData.length; i++) {
+        if (RegistrationData[i].trn === trn) {
+            userIndex = i;
+            break;
+        }
+    }
+    
+    if (userIndex === -1) {
+        alert('TRN not found!');
+        return;
+    }
+    
+    var newPassword = prompt('Enter new password (min. 8 characters):');
+    
+    if (!newPassword || newPassword.length < 8) {
+        alert('Password must be at least 8 characters long!');
+        return;
+    }
+    
+    var confirmPassword = prompt('Confirm new password:');
+    
+    if (newPassword !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+    }
+    
+    // Update password
+    RegistrationData[userIndex].password = newPassword;
+    saveRegistrationData();
+    
+    alert('Password reset successfully!');
+}
+
 // ===================================
-// IA#2: CART FUNCTIONS
+// Question 2: PRODUCT CATALOGUE
 // ===================================
 
-// IA#2: Function to add product to cart
+// Question 2.a: Initialize product array
+function initializeProducts() {
+    AllProducts = [
+        {
+            name: 'Lavender Dream',
+            price: 15.99,
+            description: 'Relaxing lavender essential oil perfect for bedtime',
+            image: 'Assets/lavender_dream.jpg'
+        },
+        {
+            name: 'Vanilla Bliss',
+            price: 14.99,
+            description: 'Sweet vanilla bean for cozy evenings',
+            image: 'Assets/Vanilla_Bliss.jpg'
+        },
+        {
+            name: 'Ocean Breeze',
+            price: 16.99,
+            description: 'Fresh ocean scent for summer vibes',
+            image: 'Assets/Ocean_Breeze.jpg'
+        },
+        {
+            name: 'Cinnamon Spice',
+            price: 15.99,
+            description: 'Warm spice blend for fall season',
+            image: 'Assets/Cinnamon_Spice.jpg'
+        },
+        {
+            name: 'Rose Garden',
+            price: 17.99,
+            description: 'Elegant floral scent for romance',
+            image: 'Assets/Rose_Garden.jpg'
+        },
+        {
+            name: 'Citrus Burst',
+            price: 14.99,
+            description: 'Energizing citrus blend for mornings',
+            image: 'Assets/Citrus_Burst.jpg'
+        },
+        {
+            name: 'Fresh Linen Spray',
+            price: 9.99,
+            description: 'Clean and crisp room spray',
+            image: 'Assets/Fresh_Linen.jpg'
+        },
+        {
+            name: 'Eucalyptus Mint Spray',
+            price: 10.99,
+            description: 'Refreshing spa-like fragrance',
+            image: 'Assets/Eucalyptus_Mint.jpg'
+        },
+        {
+            name: 'Tropical Paradise Spray',
+            price: 10.99,
+            description: 'Exotic tropical fruit blend',
+            image: 'Assets/Tropical.jpg'
+        }
+    ];
+    
+    saveAllProducts();
+}
+
+// Question 2.c: Display product list dynamically
+function displayProducts() {
+    var productsGrid = document.querySelector('.products-grid');
+    if (!productsGrid) return;
+    
+    productsGrid.innerHTML = '';
+    
+    for (var i = 0; i < AllProducts.length; i++) {
+        var product = AllProducts[i];
+        
+        var productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        
+        productCard.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.name}">
+                ${i < 3 ? '<span class="badge">' + (i === 0 ? 'Bestseller' : i === 2 ? 'New' : 'Popular') + '</span>' : ''}
+            </div>
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <p class="description">${product.description}</p>
+                <div class="product-footer">
+                    <p class="price">$${product.price.toFixed(2)}</p>
+                    <button class="btn-cart" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+                </div>
+            </div>
+        `;
+        
+        productsGrid.appendChild(productCard);
+    }
+}
+
+// ===================================
+// CART FUNCTIONS (Updated for Question 2.e)
+// ===================================
+
+// Question 2.e.i: Add product to cart
 function addToCart(name, price) {
-    // IA#2: Check if product already in cart
+    // Check if user is logged in
+    if (!currentUser) {
+        if (confirm('You need to login to add items to cart. Login now?')) {
+            window.location.href = 'login.html';
+        }
+        return;
+    }
+    
+    // Find product in AllProducts array
+    var product = null;
+    for (var i = 0; i < AllProducts.length; i++) {
+        if (AllProducts[i].name === name) {
+            product = AllProducts[i];
+            break;
+        }
+    }
+    
+    if (!product) {
+        alert('Product not found!');
+        return;
+    }
+    
+    // Check if product already in cart
     var found = false;
     for (var i = 0; i < cart.length; i++) {
         if (cart[i].name === name) {
@@ -563,33 +601,87 @@ function addToCart(name, price) {
         }
     }
     
-    // IA#2: If not found, add new product
+    // If not found, add new product
     if (!found) {
         cart.push({
-            name: name,
-            price: price,
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            image: product.image,
             quantity: 1
         });
     }
     
+    // Update user's cart in RegistrationData
+    updateUserCart();
+    
     saveCart();
-    alert(name + ' added to cart!');
+    alert(product.name + ' added to cart!');
 }
 
-// IA#2: Function to remove item from cart
+// Update user's cart in RegistrationData
+function updateUserCart() {
+    if (!currentUser) return;
+    
+    // Find user in RegistrationData and update cart
+    for (var i = 0; i < RegistrationData.length; i++) {
+        if (RegistrationData[i].trn === currentUser.trn) {
+            RegistrationData[i].cart = cart;
+            break;
+        }
+    }
+    
+    saveRegistrationData();
+}
+
+// Save cart to localStorage - USER SPECIFIC
+function saveCart() {
+    if (currentUser) {
+        // Save cart with username as key
+        localStorage.setItem('cart_' + currentUser.trn, JSON.stringify(cart));
+    } else {
+        // Guest cart (cleared on logout)
+        localStorage.setItem('cart_guest', JSON.stringify(cart));
+    }
+}
+
+// Load cart from localStorage - USER SPECIFIC
+function loadCart() {
+    if (currentUser) {
+        // Load user-specific cart
+        var saved = localStorage.getItem('cart_' + currentUser.trn);
+        if (saved) {
+            cart = JSON.parse(saved);
+        } else {
+            cart = currentUser.cart || [];
+        }
+    } else {
+        // Load guest cart
+        var saved = localStorage.getItem('cart_guest');
+        if (saved) {
+            cart = JSON.parse(saved);
+        } else {
+            cart = [];
+        }
+    }
+}
+
+// Function to remove item from cart
 function removeItem(index) {
     if (confirm('Remove this item?')) {
         cart.splice(index, 1);
+        updateUserCart();
         saveCart();
         showCart();
     }
 }
 
-// IA#2: Function to update quantity
+// Function to update quantity
 function updateQty(index, qty) {
     qty = parseInt(qty);
     if (qty > 0) {
         cart[index].quantity = qty;
+        updateUserCart();
         saveCart();
         showCart();
     } else {
@@ -597,62 +689,14 @@ function updateQty(index, qty) {
     }
 }
 
-// IA#2: Function to clear cart
+// Function to clear cart
 function clearCart() {
     if (confirm('Clear entire cart?')) {
         cart = [];
+        updateUserCart();
         saveCart();
         showCart();
         alert('Cart cleared!');
-    }
-}
-
-// IA#2: Save cart to localStorage - USER SPECIFIC (UPDATED FOR GROUP PROJECT)
-function saveCart() {
-    if (currentUser) {
-        // Save cart with username/TRN as key
-        var key = 'cart_' + (currentUser.trn || currentUser.username);
-        localStorage.setItem(key, JSON.stringify(cart));
-        
-        // Also update user's cart in RegistrationData
-        var users = loadRegisteredUsers();
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].trn === (currentUser.trn || currentUser.username)) {
-                users[i].cart = cart;
-                saveRegisteredUsers(users);
-                break;
-            }
-        }
-    } else {
-        localStorage.setItem('cart_guest', JSON.stringify(cart));
-    }
-}
-
-// IA#2: Load cart from localStorage - USER SPECIFIC (UPDATED FOR GROUP PROJECT)
-function loadCart() {
-    if (currentUser) {
-        // Try to load from user's RegistrationData first
-        var users = loadRegisteredUsers();
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].trn === (currentUser.trn || currentUser.username)) {
-                cart = users[i].cart || [];
-                break;
-            }
-        }
-        
-        // Also load from localStorage for backward compatibility
-        var key = 'cart_' + (currentUser.trn || currentUser.username);
-        var saved = localStorage.getItem(key);
-        if (saved) {
-            cart = JSON.parse(saved);
-        }
-    } else {
-        var saved = localStorage.getItem('cart_guest');
-        if (saved) {
-            cart = JSON.parse(saved);
-        } else {
-            cart = [];
-        }
     }
 }
 
@@ -676,13 +720,13 @@ function showCart() {
     
     // IA#2: Check if cart is empty
     if (cart.length === 0) {
-        if (empty) empty.style.display = 'block';
-        if (summary) summary.style.display = 'none';
+        empty.style.display = 'block';
+        summary.style.display = 'none';
         return;
     }
     
-    if (empty) empty.style.display = 'none';
-    if (summary) summary.style.display = 'block';
+    empty.style.display = 'none';
+    summary.style.display = 'block';
     
     // IA#2: Calculate totals
     var subtotal = 0;
@@ -708,15 +752,10 @@ function showCart() {
     var total = subtotal - discount + tax;
     
     // IA#2: Update summary
-    var subtotalEl = document.getElementById('subtotal');
-    var discountEl = document.getElementById('discount');
-    var taxEl = document.getElementById('tax');
-    var totalEl = document.getElementById('total');
-    
-    if (subtotalEl) subtotalEl.textContent = '$' + subtotal.toFixed(2);
-    if (discountEl) discountEl.textContent = '$' + discount.toFixed(2);
-    if (taxEl) taxEl.textContent = '$' + tax.toFixed(2);
-    if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
+    document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('discount').textContent = '$' + discount.toFixed(2);
+    document.getElementById('tax').textContent = '$' + tax.toFixed(2);
+    document.getElementById('total').textContent = '$' + total.toFixed(2);
 }
 
 // ===================================
@@ -755,15 +794,10 @@ function showCheckout() {
     var total = subtotal - discount + tax;
     
     // IA#2: Update checkout totals
-    var checkoutSubtotal = document.getElementById('checkoutSubtotal');
-    var checkoutDiscount = document.getElementById('checkoutDiscount');
-    var checkoutTax = document.getElementById('checkoutTax');
-    var checkoutTotal = document.getElementById('checkoutTotal');
-    
-    if (checkoutSubtotal) checkoutSubtotal.textContent = '$' + subtotal.toFixed(2);
-    if (checkoutDiscount) checkoutDiscount.textContent = '$' + discount.toFixed(2);
-    if (checkoutTax) checkoutTax.textContent = '$' + tax.toFixed(2);
-    if (checkoutTotal) checkoutTotal.textContent = '$' + total.toFixed(2);
+    document.getElementById('checkoutSubtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('checkoutDiscount').textContent = '$' + discount.toFixed(2);
+    document.getElementById('checkoutTax').textContent = '$' + tax.toFixed(2);
+    document.getElementById('checkoutTotal').textContent = '$' + total.toFixed(2);
     
     // IA#2: Set amount field
     var amountField = document.getElementById('amountPaid');
@@ -775,27 +809,14 @@ function showCheckout() {
     if (currentUser) {
         var nameField = document.getElementById('shippingName');
         var emailField = document.getElementById('shippingEmail');
-        if (nameField && currentUser.fullName) nameField.value = currentUser.fullName;
+        if (nameField && currentUser.firstName) nameField.value = currentUser.firstName + ' ' + currentUser.lastName;
         if (emailField && currentUser.email) emailField.value = currentUser.email;
     }
 }
 
 // ===================================
-// IA#2: CHECKOUT PROCESS & INVOICE
+// CHECKOUT AND INVOICE FUNCTIONS
 // ===================================
-
-// Load invoices from localStorage
-function loadInvoices() {
-    var saved = localStorage.getItem('invoices');
-    if (saved) {
-        invoices = JSON.parse(saved);
-    }
-}
-
-// Save invoices to localStorage
-function saveInvoices() {
-    localStorage.setItem('invoices', JSON.stringify(invoices));
-}
 
 // Generate invoice number
 function generateInvoiceNumber() {
@@ -804,7 +825,7 @@ function generateInvoiceNumber() {
     return 'INV-' + timestamp;
 }
 
-// IA#2: Process checkout - UPDATED TO PROPERLY CLEAR CART
+// Process checkout
 function processCheckout() {
     // Check authentication
     if (!currentUser) {
@@ -820,7 +841,7 @@ function processCheckout() {
         return false;
     }
     
-    // IA#2: Get form values
+    // Get form values
     var name = document.getElementById('shippingName').value;
     var email = document.getElementById('shippingEmail').value;
     var phone = document.getElementById('shippingPhone').value;
@@ -830,11 +851,11 @@ function processCheckout() {
     var paymentMethod = document.getElementById('paymentMethod').value;
     var amount = parseFloat(document.getElementById('amountPaid').value);
     
-    // IA#2: Get total
+    // Get total
     var totalText = document.getElementById('checkoutTotal').textContent;
     var total = parseFloat(totalText.replace('$', ''));
     
-    // IA#2: Check amount
+    // Check amount
     if (amount < total) {
         alert('Amount paid is less than total!');
         return false;
@@ -848,7 +869,7 @@ function processCheckout() {
     var discount = subtotal * 0.10;
     var tax = (subtotal - discount) * 0.15;
     
-    // Create invoice with deep copy of cart items
+    // Create invoice
     var invoice = {
         invoiceNumber: generateInvoiceNumber(),
         date: new Date().toLocaleString(),
@@ -860,7 +881,7 @@ function processCheckout() {
             city: city,
             postal: postal
         },
-        items: JSON.parse(JSON.stringify(cart)), // Deep copy to prevent reference issues
+        items: JSON.parse(JSON.stringify(cart)),
         subtotal: subtotal,
         discount: discount,
         tax: tax,
@@ -868,28 +889,30 @@ function processCheckout() {
         amountPaid: amount,
         change: amount - total,
         paymentMethod: paymentMethod,
-        username: currentUser.username,
-        trn: currentUser.trn || currentUser.username // GROUP PROJECT: Add TRN
+        trn: currentUser.trn
     };
     
-    // IA#2: Confirm order
+    // Confirm order
     if (confirm('Confirm order of $' + total.toFixed(2) + '?')) {
-        // Save invoice first
-        invoices.push(invoice);
-        saveInvoices();
+        // Save to user's invoices
+        currentUser.invoices.push(invoice);
         
-        // GROUP PROJECT: Also save invoice to user's RegistrationData
-        var users = loadRegisteredUsers();
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].trn === (currentUser.trn || currentUser.username)) {
-                if (!users[i].invoices) users[i].invoices = [];
-                users[i].invoices.push(invoice);
-                saveRegisteredUsers(users);
+        // Save to AllInvoices
+        AllInvoices.push(invoice);
+        saveAllInvoices();
+        
+        // Update user in RegistrationData
+        for (var i = 0; i < RegistrationData.length; i++) {
+            if (RegistrationData[i].trn === currentUser.trn) {
+                RegistrationData[i].invoices.push(invoice);
+                RegistrationData[i].cart = []; // Clear cart after checkout
                 break;
             }
         }
         
-        // IMPORTANT: Clear cart immediately after saving invoice
+        saveRegistrationData();
+        
+        // Clear cart
         cart = [];
         saveCart();
         
@@ -939,8 +962,8 @@ function printInvoice(invoice) {
     html += '<h3>Invoice Details</h3>';
     html += '<p><strong>Invoice Number:</strong> ' + invoice.invoiceNumber + '</p>';
     html += '<p><strong>Date:</strong> ' + invoice.date + '</p>';
+    html += '<p><strong>TRN:</strong> ' + invoice.trn + '</p>';
     html += '<p><strong>Payment Method:</strong> ' + invoice.paymentMethod + '</p>';
-    html += '<p><strong>TRN:</strong> ' + (invoice.trn || 'N/A') + '</p>'; // GROUP PROJECT: Add TRN
     html += '</div>';
     
     html += '<div class="info-section">';
@@ -981,6 +1004,7 @@ function printInvoice(invoice) {
     html += '<div class="footer">';
     html += '<p>Thank you for shopping with Vibe & Light!</p>';
     html += '<p>Creating memorable moments through scent</p>';
+    html += '<p><em>Invoice sent to: ' + invoice.customer.email + '</em></p>';
     html += '</div>';
     
     html += '<div style="text-align: center; margin-top: 30px;">';
@@ -1006,7 +1030,7 @@ function displayInvoiceHistory() {
     // Filter invoices for current user
     var userInvoices = [];
     for (var i = 0; i < invoices.length; i++) {
-        if (invoices[i].username === currentUser.username || invoices[i].trn === (currentUser.trn || currentUser.username)) {
+        if (invoices[i].username === currentUser.trn) {
             userInvoices.push(invoices[i]);
         }
     }
@@ -1057,3 +1081,13 @@ function cancelCheckout() {
     }
 }
 
+// Function to proceed to checkout
+function proceedToCheckout() {
+    if (!currentUser) {
+        if (confirm('You need to login or register to proceed to checkout. Would you like to login now?')) {
+            window.location.href = 'login.html';
+        }
+    } else {
+        window.location.href = 'checkout.html';
+    }
+}
