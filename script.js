@@ -10,11 +10,77 @@ var invoices = [];
 // GROUP PROJECT: Variables
 var loginAttempts = 0;
 const MAX_LOGIN_ATTEMPTS = 3;
-var allProducts = [];
+
+// GROUP PROJECT: Product array for localStorage
+var allProducts = [
+    {
+        name: 'Lavender Dream',
+        price: 15.99,
+        description: 'Relaxing lavender essential oil perfect for bedtime',
+        image: 'Assets/lavender_dream.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Vanilla Bliss',
+        price: 14.99,
+        description: 'Sweet vanilla bean for cozy evenings',
+        image: 'Assets/Vanilla_Bliss.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Ocean Breeze',
+        price: 16.99,
+        description: 'Fresh ocean scent for summer vibes',
+        image: 'Assets/Ocean_Breeze.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Cinnamon Spice',
+        price: 15.99,
+        description: 'Warm spice blend for fall season',
+        image: 'Assets/Cinnamon_Spice.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Rose Garden',
+        price: 17.99,
+        description: 'Elegant floral scent for romance',
+        image: 'Assets/Rose_Garden.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Citrus Burst',
+        price: 14.99,
+        description: 'Energizing citrus blend for mornings',
+        image: 'Assets/Citrus_Burst.jpg',
+        category: 'candle'
+    },
+    {
+        name: 'Fresh Linen Spray',
+        price: 9.99,
+        description: 'Clean and crisp room spray',
+        image: 'Assets/Fresh_Linen.jpg',
+        category: 'spray'
+    },
+    {
+        name: 'Eucalyptus Mint Spray',
+        price: 10.99,
+        description: 'Refreshing spa-like fragrance',
+        image: 'Assets/Eucalyptus_Mint.jpg',
+        category: 'spray'
+    },
+    {
+        name: 'Tropical Paradise Spray',
+        price: 10.99,
+        description: 'Exotic tropical fruit blend',
+        image: 'Assets/Tropical.jpg',
+        category: 'spray'
+    }
+];
 
 // IA#2: Load data when page loads
 window.onload = function() {
-    loadProductsFromLocalStorage(); // GROUP PROJECT: Load products first
+    loadProductsToLocalStorage(); // GROUP PROJECT: Load/save products
     loadCart();
     loadCurrentUser();
     loadInvoices();
@@ -22,12 +88,20 @@ window.onload = function() {
     showCheckout();
     displayInvoiceHistory();
     updateUIForAuth();
-    
-    // GROUP PROJECT: Display products dynamically if on products page
-    if (document.querySelector('.products-grid')) {
-        displayProducts();
-    }
 };
+
+// ===================================
+// GROUP PROJECT: PRODUCT FUNCTIONS
+// ===================================
+
+// Save products to localStorage as AllProducts
+function loadProductsToLocalStorage() {
+    var saved = localStorage.getItem('AllProducts');
+    if (!saved) {
+        // First time: save the initial products
+        localStorage.setItem('AllProducts', JSON.stringify(allProducts));
+    }
+}
 
 // ===================================
 // IA#2: AUTHENTICATION FUNCTIONS
@@ -184,14 +258,16 @@ function resetPassword() {
 // Cancel registration form
 function cancelRegistration() {
     if (confirm('Clear all form data?')) {
-        document.getElementById('registrationForm').reset();
+        var form = document.getElementById('registrationForm');
+        if (form) form.reset();
     }
 }
 
 // Cancel login form
 function cancelLogin() {
     if (confirm('Clear login form?')) {
-        document.getElementById('loginForm').reset();
+        var form = document.getElementById('loginForm');
+        if (form) form.reset();
     }
 }
 
@@ -228,9 +304,9 @@ function validateRegister() {
     
     // Clear all errors
     var errorElements = document.querySelectorAll('.error');
-    errorElements.forEach(function(element) {
-        element.textContent = '';
-    });
+    for (var i = 0; i < errorElements.length; i++) {
+        errorElements[i].textContent = '';
+    }
     
     var valid = true;
     
@@ -472,192 +548,11 @@ function validateLogin() {
 }
 
 // ===================================
-// GROUP PROJECT: PRODUCT CATALOGUE FUNCTIONS
+// IA#2: CART FUNCTIONS
 // ===================================
 
-// Initialize products array
-function initializeProducts() {
-    allProducts = [
-        {
-            name: 'Lavender Dream',
-            price: 15.99,
-            description: 'Relaxing lavender essential oil perfect for bedtime',
-            image: 'Assets/lavender_dream.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Vanilla Bliss',
-            price: 14.99,
-            description: 'Sweet vanilla bean for cozy evenings',
-            image: 'Assets/Vanilla_Bliss.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Ocean Breeze',
-            price: 16.99,
-            description: 'Fresh ocean scent for summer vibes',
-            image: 'Assets/Ocean_Breeze.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Cinnamon Spice',
-            price: 15.99,
-            description: 'Warm spice blend for fall season',
-            image: 'Assets/Cinnamon_Spice.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Rose Garden',
-            price: 17.99,
-            description: 'Elegant floral scent for romance',
-            image: 'Assets/Rose_Garden.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Citrus Burst',
-            price: 14.99,
-            description: 'Energizing citrus blend for mornings',
-            image: 'Assets/Citrus_Burst.jpg',
-            category: 'candle'
-        },
-        {
-            name: 'Fresh Linen Spray',
-            price: 9.99,
-            description: 'Clean and crisp room spray',
-            image: 'Assets/Fresh_Linen.jpg',
-            category: 'spray'
-        },
-        {
-            name: 'Eucalyptus Mint Spray',
-            price: 10.99,
-            description: 'Refreshing spa-like fragrance',
-            image: 'Assets/Eucalyptus_Mint.jpg',
-            category: 'spray'
-        },
-        {
-            name: 'Tropical Paradise Spray',
-            price: 10.99,
-            description: 'Exotic tropical fruit blend',
-            image: 'Assets/Tropical.jpg',
-            category: 'spray'
-        }
-    ];
-}
-
-// Save products to localStorage
-function saveProductsToLocalStorage() {
-    localStorage.setItem('AllProducts', JSON.stringify(allProducts));
-}
-
-// Load products from localStorage
-function loadProductsFromLocalStorage() {
-    var saved = localStorage.getItem('AllProducts');
-    if (saved) {
-        allProducts = JSON.parse(saved);
-    } else {
-        // Initialize with default products if none exist
-        initializeProducts();
-        saveProductsToLocalStorage();
-    }
-}
-
-// Display products dynamically
-function displayProducts() {
-    var candlesGrid = document.getElementById('candlesGrid');
-    var spraysGrid = document.getElementById('spraysGrid');
-    var productsGrid = document.querySelector('.products-grid:not([id])');
-    
-    // If using dynamic grids (candlesGrid and spraysGrid)
-    if (candlesGrid && spraysGrid) {
-        // Clear existing content
-        candlesGrid.innerHTML = '';
-        spraysGrid.innerHTML = '';
-        
-        // Display candles
-        allProducts.forEach(function(product) {
-            if (product.category === 'candle') {
-                var productCard = createProductCard(product);
-                candlesGrid.appendChild(productCard);
-            }
-        });
-        
-        // Display sprays
-        allProducts.forEach(function(product) {
-            if (product.category === 'spray') {
-                var productCard = createProductCard(product);
-                spraysGrid.appendChild(productCard);
-            }
-        });
-    } 
-    // If using single products grid (for backward compatibility)
-    else if (productsGrid) {
-        productsGrid.innerHTML = '';
-        
-        allProducts.forEach(function(product) {
-            var productCard = createProductCard(product);
-            productsGrid.appendChild(productCard);
-        });
-    }
-}
-
-// Create product card HTML
-function createProductCard(product) {
-    var card = document.createElement('div');
-    card.className = 'product-card';
-    
-    var badge = '';
-    if (product.name === 'Lavender Dream') {
-        badge = '<span class="badge">Bestseller</span>';
-    } else if (product.name === 'Ocean Breeze') {
-        badge = '<span class="badge new">New</span>';
-    } else if (product.name === 'Vanilla Bliss') {
-        badge = '<span class="badge">Popular</span>';
-    }
-    
-    card.innerHTML = `
-        <div class="product-image">
-            <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x300?text=Product+Image'">
-            ${badge}
-        </div>
-        <div class="product-info">
-            <h3>${product.name}</h3>
-            <p class="description">${product.description}</p>
-            <div class="product-footer">
-                <p class="price">$${product.price.toFixed(2)}</p>
-                <button class="btn-cart" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
-            </div>
-        </div>
-    `;
-    
-    return card;
-}
-
-// ===================================
-// IA#2: CART FUNCTIONS (UPDATED FOR GROUP PROJECT)
-// ===================================
-
-// IA#2: Function to add product to cart - UPDATED FOR GROUP PROJECT
+// IA#2: Function to add product to cart
 function addToCart(name, price) {
-    // GROUP PROJECT: Find product details
-    var product = null;
-    for (var i = 0; i < allProducts.length; i++) {
-        if (allProducts[i].name === name) {
-            product = allProducts[i];
-            break;
-        }
-    }
-    
-    // For backward compatibility
-    if (!product) {
-        product = {
-            name: name,
-            price: price,
-            description: '',
-            image: '',
-            category: ''
-        };
-    }
-    
     // IA#2: Check if product already in cart
     var found = false;
     for (var i = 0; i < cart.length; i++) {
@@ -671,11 +566,8 @@ function addToCart(name, price) {
     // IA#2: If not found, add new product
     if (!found) {
         cart.push({
-            name: product.name,
-            price: product.price,
-            description: product.description,
-            image: product.image,
-            category: product.category,
+            name: name,
+            price: price,
             quantity: 1
         });
     }
