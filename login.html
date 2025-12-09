@@ -34,25 +34,24 @@
             <form id="loginForm" onsubmit="return validateLogin()">
                 <label>Tax Registration Number (TRN)</label>
                 <input type="text" id="username" required placeholder="000-000-000" pattern="\d{3}-\d{3}-\d{3}">
-                <small style="display: block; margin-top: -10px; margin-bottom: 15px; color: #666;">Use your TRN as username</small>
+                <span class="form-hint">Use your TRN as username</span>
                 <span class="error" id="usernameError"></span>
 
                 <label>Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
                 <span class="error" id="passwordError"></span>
 
-                <!-- GROUP PROJECT: Added password reset link -->
-                <div style="text-align: right; margin-bottom: 20px;">
-                    <a href="#" onclick="resetPassword(); return false;" style="font-size: 14px; color: #D2691E;">Forgot Password?</a>
+                <div class="form-options">
+                    <a href="#" onclick="resetPassword(); return false;" class="forgot-password">Forgot Password?</a>
                 </div>
 
-                <div style="display: flex; gap: 15px;">
-                    <button type="button" onclick="cancelLogin()" style="flex: 1; background: #999;">Cancel</button>
-                    <button type="submit" style="flex: 1;">Login</button>
+                <div class="form-buttons">
+                    <button type="button" onclick="cancelLogin()" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Login</button>
                 </div>
             </form>
 
-            <p style="text-align: center; margin-top: 20px;">
+            <p class="form-footer">
                 Don't have an account? <a href="register.html">Register here</a>
             </p>
         </div>
