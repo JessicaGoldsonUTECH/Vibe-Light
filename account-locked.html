@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Navigation -->
     <nav>
         <div class="nav-container">
             <div class="logo">
@@ -22,29 +23,27 @@
         </div>
     </nav>
 
+    <!-- Account Locked Message -->
     <div class="form-page">
         <div class="form-box">
-            <h1 style="color: #d32f2f;">🔒 Account Locked</h1>
+            <div class="locked-icon">🔒</div>
+            <h1 style="color: #d32f2f;">Account Locked</h1>
             <p>Too many failed login attempts</p>
             
-            <div style="text-align: center; padding: 20px;">
-                <div style="font-size: 60px; margin-bottom: 20px;">⛔</div>
-                <p style="margin-bottom: 20px; font-size: 16px; color: #666;">
-                    Your account has been temporarily locked due to multiple failed login attempts.
-                </p>
-                <p style="margin-bottom: 30px; font-size: 16px; color: #666;">
-                    Please reset your password or try again later.
-                </p>
-                
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <button onclick="resetPassword()" class="btn-primary">Reset Password</button>
-                    <button onclick="window.location.href='login.html'" style="background: #999;">Back to Login</button>
-                    <button onclick="window.location.href='index.html'" style="background: #6B3410;">Return to Home</button>
-                </div>
+            <div class="locked-message">
+                <p>Your account has been temporarily locked due to multiple failed login attempts.</p>
+                <p>Please reset your password or try again later.</p>
+            </div>
+            
+            <div class="form-buttons-vertical">
+                <button onclick="resetPassword()" class="btn-primary">Reset Password</button>
+                <button onclick="window.location.href='login.html'" class="btn-secondary">Back to Login</button>
+                <button onclick="window.location.href='index.html'" class="btn-home">Return to Home</button>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
