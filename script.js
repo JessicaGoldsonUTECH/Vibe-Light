@@ -56,21 +56,21 @@ var allProducts = [
         category: 'candle'
     },
     {
-        name: 'Fresh Linen Spray',
+        name: 'Fresh Linen Spray',  // CHANGED: Added "Spray"
         price: 9.99,
         description: 'Clean and crisp room spray',
         image: 'Assets/Fresh_Linen.jpg',
         category: 'spray'
     },
     {
-        name: 'Eucalyptus Mint Spray',
+        name: 'Eucalyptus Mint Spray',  // CHANGED: Added "Spray"
         price: 10.99,
         description: 'Refreshing spa-like fragrance',
         image: 'Assets/Eucalyptus_Mint.jpg',
         category: 'spray'
     },
     {
-        name: 'Tropical Paradise Spray',
+        name: 'Tropical Paradise Spray',  // CHANGED: Added "Spray"
         price: 10.99,
         description: 'Exotic tropical fruit blend',
         image: 'Assets/Tropical.jpg',
@@ -1056,3 +1056,4 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
