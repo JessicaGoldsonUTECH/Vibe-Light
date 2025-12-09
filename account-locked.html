@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Locked - Vibe & Light</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <h1>🕯️ Vibe & Light</h1>
+                <p>Custom Candles & Room Scents</p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="form-page">
+        <div class="form-box">
+            <h1 style="color: #d32f2f;">🔒 Account Locked</h1>
+            <p>Too many failed login attempts</p>
+            
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 60px; margin-bottom: 20px;">⛔</div>
+                <p style="margin-bottom: 20px; font-size: 16px; color: #666;">
+                    Your account has been temporarily locked due to multiple failed login attempts.
+                </p>
+                <p style="margin-bottom: 30px; font-size: 16px; color: #666;">
+                    Please reset your password or try again later.
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <button onclick="resetPassword()" class="btn-primary">Reset Password</button>
+                    <button onclick="window.location.href='login.html'" style="background: #999;">Back to Login</button>
+                    <button onclick="window.location.href='index.html'" style="background: #6B3410;">Return to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Vibe & Light</h3>
+                <p>Creating memorable moments through scent</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
