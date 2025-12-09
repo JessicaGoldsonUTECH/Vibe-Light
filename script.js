@@ -425,6 +425,7 @@ function validateLogin() {
 }
 
 // Question 1.b.vi: Reset Password function
+// Question 1.b.vi: Reset Password function - UPDATED
 function resetPassword() {
     var trn = prompt('Enter your TRN to reset password:');
     
@@ -442,6 +443,11 @@ function resetPassword() {
     if (userIndex === -1) {
         alert('TRN not found!');
         return;
+    }
+    
+    // Reset login attempts when resetting password
+    if (loginAttempts[trn]) {
+        loginAttempts[trn].count = 0;
     }
     
     var newPassword = prompt('Enter new password (min. 8 characters):');
@@ -462,7 +468,10 @@ function resetPassword() {
     RegistrationData[userIndex].password = newPassword;
     saveRegistrationData();
     
-    alert('Password reset successfully!');
+    alert('Password reset successfully! Your account has been unlocked. Please login with your new password.');
+    
+    // Redirect to login page
+    window.location.href = 'login.html';
 }
 
 // ===================================
@@ -1091,3 +1100,4 @@ function proceedToCheckout() {
         window.location.href = 'checkout.html';
     }
 }
+
