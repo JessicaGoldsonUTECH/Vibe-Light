@@ -111,6 +111,10 @@ window.onload = function() {
     displayInvoiceHistory();
     updateUIForAuth();
     ShowUserFrequency();
+    // If invoice-history admin table exists on the page, populate it
+    if (document.getElementById('invoiceTableBody')) {
+        ShowInvoices(true);
+    }
 };
 
 // ===================================
@@ -644,6 +648,81 @@ function validateRegister() {
     return false;
 }
 
+// Process password reset request from reset-password.html
+function processPasswordReset() {
+    var trn = document.getElementById('resetTrn').value.trim();
+    var email = document.getElementById('resetEmail').value.trim();
+    var password = document.getElementById('resetPassword').value;
+    var confirm = document.getElementById('resetConfirm').value;
+
+    // Clear errors
+    var trnErr = document.getElementById('resetTrnError'); if (trnErr) trnErr.textContent = '';
+    var emailErr = document.getElementById('resetEmailError'); if (emailErr) emailErr.textContent = '';
+    var passErr = document.getElementById('resetPasswordError'); if (passErr) passErr.textContent = '';
+    var confErr = document.getElementById('resetConfirmError'); if (confErr) confErr.textContent = '';
+
+    var valid = true;
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (!trnPattern.test(trn)) {
+        if (trnErr) trnErr.textContent = 'TRN must be in the format 000-000-000';
+        valid = false;
+    }
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        if (emailErr) emailErr.textContent = 'Valid email required';
+        valid = false;
+    }
+    if (password.length < 8) {
+        if (passErr) passErr.textContent = 'Password must be 8+ characters';
+        valid = false;
+    }
+    if (password !== confirm) {
+        if (confErr) confErr.textContent = 'Passwords do not match';
+        valid = false;
+    }
+
+    if (!valid) return false;
+
+    // Normalize
+    var regData = getRegistrationData();
+    var foundInReg = null;
+    for (var i = 0; i < regData.length; i++) {
+        if (regData[i].trn === trn && regData[i].email === email) {
+            foundInReg = regData[i];
+            break;
+        }
+    }
+
+    var users = localStorage.getItem('registeredUsers');
+    var usersList = users ? JSON.parse(users) : [];
+    var foundInUsers = null;
+    for (var j = 0; j < usersList.length; j++) {
+        if (usersList[j].username === trn && usersList[j].email === email) {
+            foundInUsers = usersList[j];
+            break;
+        }
+    }
+
+    if (!foundInReg && !foundInUsers) {
+        alert('No matching account found for that TRN and email.');
+        return false;
+    }
+
+    // Update passwords where present
+    if (foundInReg) {
+        foundInReg.password = password;
+        saveRegistrationData(regData);
+    }
+    if (foundInUsers) {
+        foundInUsers.password = password;
+        localStorage.setItem('registeredUsers', JSON.stringify(usersList));
+    }
+
+    alert('Password reset successful. You may now login with your new password.');
+    window.location.href = 'login.html';
+    return false;
+}
+
 function clearRegisterForm() {
     document.getElementById('firstName').value = '';
     document.getElementById('lastName').value = '';
@@ -989,6 +1068,74 @@ function ShowUserFrequency() {
 
     renderBars(genderDiv, genders);
     renderBars(ageDiv, ages);
+}
+
+// Show all stored invoices or filter by TRN/username
+function ShowInvoices(showAll) {
+    var tbody = document.getElementById('invoiceTableBody');
+    if (!tbody) return;
+
+    var allInv = getAllInvoices() || [];
+    var input = document.getElementById('searchTrn');
+    var rawQuery = input ? input.value.trim() : '';
+    var normalizedQuery = rawQuery.replace(/\D/g, ''); // remove non-digits for TRN matching
+
+    var rows = [];
+
+    function normalizeCandidate(s) {
+        return (s || '').toString().replace(/\D/g, '');
+    }
+
+    for (var i = 0; i < allInv.length; i++) {
+        var inv = allInv[i];
+
+        // Determine if this invoice should be shown
+        var show = !!showAll;
+        if (!show) {
+            if (normalizedQuery === '') {
+                // nothing to search for and not asking for all => skip
+                show = false;
+            } else {
+                // check several candidate TRN/username fields
+                var candidates = [inv.trn, inv.username];
+                // also consider username stored inside customer object (if present)
+                if (inv.customer && inv.customer.trn) candidates.push(inv.customer.trn);
+
+                for (var c = 0; c < candidates.length; c++) {
+                    var candNorm = normalizeCandidate(candidates[c]);
+                    if (candNorm && candNorm.indexOf(normalizedQuery) !== -1) {
+                        show = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!show) continue;
+
+        var trnDisplay = inv.trn || inv.username || '';
+        var custName = '';
+        if (inv.customer) {
+            custName = inv.customer.name || ((inv.customer.firstName ? (inv.customer.firstName + ' ' + (inv.customer.lastName||'')) : '')) || '';
+        }
+        var date = inv.date || '';
+        var total = inv.total !== undefined ? '$' + parseFloat(inv.total).toFixed(2) : '$0.00';
+
+        rows.push('<tr>' +
+            '<td>' + (inv.invoiceNumber || '') + '</td>' +
+            '<td>' + trnDisplay + '</td>' +
+            '<td>' + custName + '</td>' +
+            '<td>' + date + '</td>' +
+            '<td>' + total + '</td>' +
+            '<td><button onclick="reprintInvoice(\'' + (inv.invoiceNumber || '') + '\')">Print</button></td>' +
+            '</tr>');
+    }
+
+    if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No invoices found</td></tr>';
+    } else {
+        tbody.innerHTML = rows.join('');
+    }
 }
 
 

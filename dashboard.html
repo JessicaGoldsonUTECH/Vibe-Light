@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard - Vibe & Light</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav>
+		<div class="nav-container">
+			<div class="logo">
+				<h1>🕯️ Vibe & Light</h1>
+				<p>Custom Candles & Room Scents</p>
+			</div>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="products.html">Products</a></li>
+				<li><a href="cart.html">Cart</a></li>
+				<li><a href="invoice-history.html">Invoices</a></li>
+				<li><a href="dashboard.html" class="active">Dashboard</a></li>
+				<li><a href="about.html">About</a></li>
+				<li><a href="login.html">Login</a></li>
+				<li><a href="register.html">Register</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<section class="container">
+		<h2 class="section-title">Admin Dashboard</h2>
+
+		<p style="color:#666; max-width:680px">Overview of registered users. Data is read from the site's registration storage and rendered using the existing site scripts.</p>
+
+		<div class="dashboard-grid" style="margin-top:18px; gap:18px; display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+			<div class="card">
+				<h3>Gender Distribution</h3>
+				<div id="genderChart" class="chart-container"></div>
+			</div>
+
+			<div class="card">
+				<h3>Age Group Distribution</h3>
+				<div id="ageChart" class="chart-container"></div>
+			</div>
+		</div>
+	</section>
+
+	<style>
+		.card { background:#fff; border:1px solid #eee; padding:16px; border-radius:10px; }
+		.chart-container { padding:10px; border-radius:8px; background:#fafafa; border:1px solid #eee; margin-top:10px; }
+		.bar-row { display:flex; align-items:center; margin:8px 0; }
+		.bar-label { width:110px; font-size:14px; font-weight:600; color:#444; }
+		.bar { height:16px; background:#6B3410; border-radius:6px; margin:0 12px; transition: width 0.3s ease; }
+		.bar-value { font-size:13px; font-weight:700; color:#333; min-width:28px; text-align:right; }
+		@media (max-width:520px) { .bar-label { width:80px; } }
+	</style>
+
+	<footer>
+		<div class="footer-content">
+			<div class="footer-section">
+				<h3>Vibe & Light</h3>
+				<p>Creating memorable moments through scent</p>
+			</div>
+			<div class="footer-section">
+				<h3>Quick Links</h3>
+				<ul>
+					<li><a href="products.html">Products</a></li>
+					<li><a href="about.html">About Us</a></li>
+					<li><a href="cart.html">Shopping Cart</a></li>
+					<li><a href="invoice-history.html">Invoice History</a></li>
+				</ul>
+			</div>
+			<div class="footer-section">
+				<h3>Contact</h3>
+				<p>Email: <a href="mailto:jessicaagoldson@students.utech.edu.jm">jessicaagoldson@students.utech.edu.jm</a></p>
+				<p>&copy; 2025 Vibe & Light. All rights reserved.</p>
+			</div>
+		</div>
+	</footer>
+
+	<script src="script.js"></script>
+	<script>
+		// Ensure charts render when this page loads (safe to call multiple times)
+		document.addEventListener('DOMContentLoaded', function() {
+			if (typeof ShowUserFrequency === 'function') {
+				ShowUserFrequency();
+			}
+		});
+	</script>
+</body>
+</html>
+
