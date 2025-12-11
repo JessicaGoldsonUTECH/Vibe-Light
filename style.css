@@ -482,6 +482,15 @@ button:hover {
     font-weight: 500;
 }
 
+.error {
+    color: #d32f2f;
+    font-size: 13px;
+    display: block;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
 .form-buttons {
     display: flex;
     flex-direction: column;
