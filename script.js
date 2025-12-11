@@ -111,6 +111,10 @@ window.onload = function() {
     displayInvoiceHistory();
     updateUIForAuth();
     ShowUserFrequency();
+    // If invoice-history admin table exists on the page, populate it
+    if (document.getElementById('invoiceTableBody')) {
+        ShowInvoices(true);
+    }
 };
 
 // ===================================
@@ -989,6 +993,74 @@ function ShowUserFrequency() {
 
     renderBars(genderDiv, genders);
     renderBars(ageDiv, ages);
+}
+
+// Show all stored invoices or filter by TRN/username
+function ShowInvoices(showAll) {
+    var tbody = document.getElementById('invoiceTableBody');
+    if (!tbody) return;
+
+    var allInv = getAllInvoices() || [];
+    var input = document.getElementById('searchTrn');
+    var rawQuery = input ? input.value.trim() : '';
+    var normalizedQuery = rawQuery.replace(/\D/g, ''); // remove non-digits for TRN matching
+
+    var rows = [];
+
+    function normalizeCandidate(s) {
+        return (s || '').toString().replace(/\D/g, '');
+    }
+
+    for (var i = 0; i < allInv.length; i++) {
+        var inv = allInv[i];
+
+        // Determine if this invoice should be shown
+        var show = !!showAll;
+        if (!show) {
+            if (normalizedQuery === '') {
+                // nothing to search for and not asking for all => skip
+                show = false;
+            } else {
+                // check several candidate TRN/username fields
+                var candidates = [inv.trn, inv.username];
+                // also consider username stored inside customer object (if present)
+                if (inv.customer && inv.customer.trn) candidates.push(inv.customer.trn);
+
+                for (var c = 0; c < candidates.length; c++) {
+                    var candNorm = normalizeCandidate(candidates[c]);
+                    if (candNorm && candNorm.indexOf(normalizedQuery) !== -1) {
+                        show = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!show) continue;
+
+        var trnDisplay = inv.trn || inv.username || '';
+        var custName = '';
+        if (inv.customer) {
+            custName = inv.customer.name || ((inv.customer.firstName ? (inv.customer.firstName + ' ' + (inv.customer.lastName||'')) : '')) || '';
+        }
+        var date = inv.date || '';
+        var total = inv.total !== undefined ? '$' + parseFloat(inv.total).toFixed(2) : '$0.00';
+
+        rows.push('<tr>' +
+            '<td>' + (inv.invoiceNumber || '') + '</td>' +
+            '<td>' + trnDisplay + '</td>' +
+            '<td>' + custName + '</td>' +
+            '<td>' + date + '</td>' +
+            '<td>' + total + '</td>' +
+            '<td><button onclick="reprintInvoice(\'' + (inv.invoiceNumber || '') + '\')">Print</button></td>' +
+            '</tr>');
+    }
+
+    if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No invoices found</td></tr>';
+    } else {
+        tbody.innerHTML = rows.join('');
+    }
 }
 
 
