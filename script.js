@@ -402,7 +402,7 @@ function showCheckout() {
 
 // IA#2: Validate login form
 function validateLogin() {
-// Read TRN & password (TRN uses the old username field)
+    // Read TRN & password (TRN uses the old username field)
     var trnOrUsername = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
@@ -473,6 +473,18 @@ function validateLogin() {
     }
 
     return false;
+}
+
+function clearLoginForm() {
+    var usernameInput = document.getElementById('username');
+    var passwordInput = document.getElementById('password');
+    var usernameError = document.getElementById('usernameError');
+    var passwordError = document.getElementById('passwordError');
+
+    if (usernameInput) usernameInput.value = '';
+    if (passwordInput) passwordInput.value = '';
+    if (usernameError) usernameError.textContent = '';
+    if (passwordError) passwordError.textContent = '';
 }
 
 // IA#2: Validate register form
@@ -1001,6 +1013,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
