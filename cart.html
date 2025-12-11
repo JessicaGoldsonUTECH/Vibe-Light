@@ -83,23 +83,24 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script>
-        // Load and display cart when page loads
-        window.addEventListener('DOMContentLoaded', function() {
-            loadCart();
-            showCart();
-        });
+   <script src="script.js"></script>
+<script>
+    // Load and display cart when page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        loadCurrentUser();
+        loadCart();
+        showCart();
+    });
 
-        function proceedToCheckout() {
-            if (!currentUser) {
-                if (confirm('You need to login or register to proceed to checkout. Would you like to login now?')) {
-                    window.location.href = 'login.html';
-                }
-            } else {
-                window.location.href = 'checkout.html';
+    function proceedToCheckout() {
+        if (!currentUser) {
+            if (confirm('You need to login or register to proceed to checkout. Would you like to login now?')) {
+                window.location.href = 'login.html';
             }
+        } else {
+            window.location.href = 'checkout.html';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
