@@ -45,8 +45,13 @@
                 <span class="error" id="emailError"></span>
 
                 <label>Username</label>
-                <input type="text" id="regUsername" required placeholder="Enter your TRN">
-                <span class="error" id="usernameError"></span>
+<input type="text"
+       id="regUsername"
+       required
+       placeholder="000-000-000"
+       pattern="\d{3}-\d{3}-\d{3}"
+       title="TRN must be in the format 000-000-000">
+<span class="error" id="usernameError"></span>
 
                 <label>Password</label>
                 <input type="password" id="regPassword" required placeholder="Create a password">
@@ -91,3 +96,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
