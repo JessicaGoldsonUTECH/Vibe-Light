@@ -32,16 +32,21 @@
             <p>Login to your account</p>
 
             <form onsubmit="return validateLogin()">
-                <label>TRN</label>
-                <input type="text" id="username" required placeholder="Enter your TRN">
-                <span class="error" id="usernameError"></span>
+    <label>TRN</label>
+    <input type="text"
+           id="username"
+           required
+           placeholder="000-000-000"
+           pattern="\d{3}-\d{3}-\d{3}"
+           title="TRN must be in the format 000-000-000">
+    <span class="error" id="usernameError"></span>
 
-                <label>Password</label>
-                <input type="password" id="password" required placeholder="Enter your password">
-                <span class="error" id="passwordError"></span>
+    <label>Password</label>
+    <input type="password" id="password" required placeholder="Enter your password">
+    <span class="error" id="passwordError"></span>
 
-                <button type="submit">Login</button>
-            </form>
+    <button type="submit">Login</button>
+</form>
 
             <p style="text-align: center; margin-top: 20px;">
                 Don't have an account? <a href="register.html">Register here</a>
@@ -78,4 +83,5 @@
     </script>
 </body>
 </html>
+
 
