@@ -54,8 +54,8 @@ function initAllProducts() {
 // IA#2: Load data when page loads
 window.onload = function() {
     initAllProducts();
-    loadCart();
     loadCurrentUser();
+    loadCart();
     loadInvoices();
     showCart();
     showCheckout();
@@ -887,6 +887,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
