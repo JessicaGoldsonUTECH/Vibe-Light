@@ -648,6 +648,81 @@ function validateRegister() {
     return false;
 }
 
+// Process password reset request from reset-password.html
+function processPasswordReset() {
+    var trn = document.getElementById('resetTrn').value.trim();
+    var email = document.getElementById('resetEmail').value.trim();
+    var password = document.getElementById('resetPassword').value;
+    var confirm = document.getElementById('resetConfirm').value;
+
+    // Clear errors
+    var trnErr = document.getElementById('resetTrnError'); if (trnErr) trnErr.textContent = '';
+    var emailErr = document.getElementById('resetEmailError'); if (emailErr) emailErr.textContent = '';
+    var passErr = document.getElementById('resetPasswordError'); if (passErr) passErr.textContent = '';
+    var confErr = document.getElementById('resetConfirmError'); if (confErr) confErr.textContent = '';
+
+    var valid = true;
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (!trnPattern.test(trn)) {
+        if (trnErr) trnErr.textContent = 'TRN must be in the format 000-000-000';
+        valid = false;
+    }
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        if (emailErr) emailErr.textContent = 'Valid email required';
+        valid = false;
+    }
+    if (password.length < 8) {
+        if (passErr) passErr.textContent = 'Password must be 8+ characters';
+        valid = false;
+    }
+    if (password !== confirm) {
+        if (confErr) confErr.textContent = 'Passwords do not match';
+        valid = false;
+    }
+
+    if (!valid) return false;
+
+    // Normalize
+    var regData = getRegistrationData();
+    var foundInReg = null;
+    for (var i = 0; i < regData.length; i++) {
+        if (regData[i].trn === trn && regData[i].email === email) {
+            foundInReg = regData[i];
+            break;
+        }
+    }
+
+    var users = localStorage.getItem('registeredUsers');
+    var usersList = users ? JSON.parse(users) : [];
+    var foundInUsers = null;
+    for (var j = 0; j < usersList.length; j++) {
+        if (usersList[j].username === trn && usersList[j].email === email) {
+            foundInUsers = usersList[j];
+            break;
+        }
+    }
+
+    if (!foundInReg && !foundInUsers) {
+        alert('No matching account found for that TRN and email.');
+        return false;
+    }
+
+    // Update passwords where present
+    if (foundInReg) {
+        foundInReg.password = password;
+        saveRegistrationData(regData);
+    }
+    if (foundInUsers) {
+        foundInUsers.password = password;
+        localStorage.setItem('registeredUsers', JSON.stringify(usersList));
+    }
+
+    alert('Password reset successful. You may now login with your new password.');
+    window.location.href = 'login.html';
+    return false;
+}
+
 function clearRegisterForm() {
     document.getElementById('firstName').value = '';
     document.getElementById('lastName').value = '';
