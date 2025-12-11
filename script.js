@@ -40,13 +40,62 @@ function initAllProducts() {
     if (localStorage.getItem(ALL_PRODUCTS_KEY)) return;
 
     var defaultProducts = [
-        { id: 1, name: 'Lavender Dream', price: 15.99, category: 'Candle' },
-        { id: 2, name: 'Vanilla Bliss', price: 14.99, category: 'Candle' },
-        { id: 3, name: 'Ocean Breeze', price: 16.99, category: 'Candle' },
-        { id: 4, name: 'Citrus Burst', price: 14.99, category: 'Candle' },
-        { id: 5, name: 'Fresh Linen Spray', price: 9.99, category: 'Spray' },
-        { id: 6, name: 'Eucalyptus Mint Spray', price: 10.99, category: 'Spray' },
-        { id: 7, name: 'Tropical Paradise Spray', price: 10.99, category: 'Spray' }
+        {
+            id: 1,
+            name: 'Lavender Dream',
+            price: 15.99,
+            category: 'Candle',
+            description: 'Relaxing lavender essential oil perfect for bedtime',
+            image: 'Assets/lavender_dream.jpg'
+        },
+        {
+            id: 2,
+            name: 'Vanilla Bliss',
+            price: 14.99,
+            category: 'Candle',
+            description: 'Sweet vanilla bean for cozy evenings',
+            image: 'Assets/Vanilla_Bliss.jpg'
+        },
+        {
+            id: 3,
+            name: 'Ocean Breeze',
+            price: 16.99,
+            category: 'Candle',
+            description: 'Fresh ocean scent for summer vibes',
+            image: 'Assets/Ocean_Breeze.jpg'
+        },
+        {
+            id: 4,
+            name: 'Citrus Burst',
+            price: 14.99,
+            category: 'Candle',
+            description: 'Energizing citrus blend for mornings',
+            image: 'Assets/Citrus_Burst.jpg'
+        },
+        {
+            id: 5,
+            name: 'Fresh Linen Spray',
+            price: 9.99,
+            category: 'Spray',
+            description: 'Clean and crisp room spray',
+            image: 'Assets/Fresh_Linen.jpg'
+        },
+        {
+            id: 6,
+            name: 'Eucalyptus Mint Spray',
+            price: 10.99,
+            category: 'Spray',
+            description: 'Refreshing spa-like fragrance',
+            image: 'Assets/Eucalyptus_Mint.jpg'
+        },
+        {
+            id: 7,
+            name: 'Tropical Paradise Spray',
+            price: 10.99,
+            category: 'Spray',
+            description: 'Exotic tropical fruit blend',
+            image: 'Assets/Tropical.jpg'
+        }
     ];
 
     localStorage.setItem(ALL_PRODUCTS_KEY, JSON.stringify(defaultProducts));
@@ -895,6 +944,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
