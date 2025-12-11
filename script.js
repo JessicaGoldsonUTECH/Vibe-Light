@@ -402,7 +402,7 @@ function showCheckout() {
 
 // IA#2: Validate login form
 function validateLogin() {
-    // Read TRN & password (TRN uses the old username field)
+// Read TRN & password (TRN uses the old username field)
     var trnOrUsername = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
@@ -1001,6 +1001,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
