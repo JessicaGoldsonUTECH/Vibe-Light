@@ -483,11 +483,33 @@ button:hover {
     font-weight: 500;
 }
 
+.form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    flex: 1;
+    padding: 16px;
+    font-size: 17px;
+}
+
 .form-box button {
     width: 100%;
     padding: 16px;
     font-size: 17px;
     margin-top: 10px;
+}
+
+.form-forgot-password {
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.form-signup-link {
+    text-align: center;
+    margin-top: 20px;
 }
 
 .form-box a {
