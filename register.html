@@ -32,37 +32,54 @@
             <p>Join our community today</p>
 
             <form onsubmit="return validateRegister()">
-                <label>Full Name</label>
-                <input type="text" id="fullName" required placeholder="Enter your full name">
-                <span class="error" id="nameError"></span>
+    <label>First Name</label>
+    <input type="text" id="firstName" required placeholder="Enter your first name">
+    <span class="error" id="nameError"></span>
 
-                <label>Date of Birth</label>
-                <input type="date" id="dob" required>
-                <span class="error" id="dobError"></span>
+    <label>Last Name</label>
+    <input type="text" id="lastName" required placeholder="Enter your last name">
 
-                <label>Email</label>
-                <input type="email" id="email" required placeholder="Enter your email">
-                <span class="error" id="emailError"></span>
+    <label>Date of Birth</label>
+    <input type="date" id="dob" required>
+    <span class="error" id="dobError"></span>
 
-                <label>Username</label>
-<input type="text"
-       id="regUsername"
-       required
-       placeholder="000-000-000"
-       pattern="\d{3}-\d{3}-\d{3}"
-       title="TRN must be in the format 000-000-000">
-<span class="error" id="usernameError"></span>
+    <label>Gender</label>
+    <select id="gender" required>
+        <option value="">Select gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select>
+    <span class="error" id="genderError"></span>
 
-                <label>Password</label>
-                <input type="password" id="regPassword" required placeholder="Create a password">
-                <span class="error" id="passwordError"></span>
+    <label>Phone Number</label>
+    <input type="tel" id="phone" required placeholder="Enter your phone number">
+    <span class="error" id="phoneError"></span>
 
-                <label>Confirm Password</label>
-                <input type="password" id="confirmPassword" required placeholder="Confirm your password">
-                <span class="error" id="confirmError"></span>
+    <label>Email</label>
+    <input type="email" id="email" required placeholder="Enter your email">
+    <span class="error" id="emailError"></span>
 
-                <button type="submit">Register</button>
-            </form>
+    <label>TRN</label>
+    <input type="text"
+           id="regUsername"
+           required
+           placeholder="000-000-000"
+           pattern="\d{3}-\d{3}-\d{3}"
+           title="TRN must be in the format 000-000-000">
+    <span class="error" id="usernameError"></span>
+
+    <label>Password</label>
+    <input type="password" id="regPassword" required placeholder="Create a password">
+    <span class="error" id="passwordError"></span>
+
+    <label>Confirm Password</label>
+    <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+    <span class="error" id="confirmError"></span>
+
+    <button type="submit">Register</button>
+    <button type="button" onclick="clearRegisterForm()" style="margin-left: 10px;">Cancel</button>
+</form>
 
             <p style="text-align: center; margin-top: 20px;">
                 Already have an account? <a href="login.html">Login here</a>
@@ -96,4 +113,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
