@@ -478,8 +478,11 @@ function validateLogin() {
 // IA#2: Validate register form
 function validateRegister() {
     // IA#2: Get input values
-    var name = document.getElementById('fullName').value;
+    var firstName = document.getElementById('firstName').value;
+    var lastName = document.getElementById('lastName').value;
     var dob = document.getElementById('dob').value;
+    var gender = document.getElementById('gender').value;
+    var phone = document.getElementById('phone').value;
     var email = document.getElementById('email').value;
     var username = document.getElementById('regUsername').value;   // used as TRN
     var password = document.getElementById('regPassword').value;
@@ -488,6 +491,8 @@ function validateRegister() {
     // IA#2: Clear errors
     document.getElementById('nameError').textContent = '';
     document.getElementById('dobError').textContent = '';
+    document.getElementById('genderError').textContent = '';
+    document.getElementById('phoneError').textContent = '';
     document.getElementById('emailError').textContent = '';
     document.getElementById('usernameError').textContent = '';
     document.getElementById('passwordError').textContent = '';
@@ -495,15 +500,39 @@ function validateRegister() {
 
     var valid = true;
 
-    // IA#2: Validate name
-    if (name === '') {
-        document.getElementById('nameError').textContent = 'Name required';
+    // IA#2: Validate names
+    if (firstName === '' || lastName === '') {
+        document.getElementById('nameError').textContent = 'First and last name required';
         valid = false;
     }
 
-    // IA#2: Validate DOB
+    // IA#2: Validate DOB and age >= 18
     if (dob === '') {
         document.getElementById('dobError').textContent = 'Date of birth required';
+        valid = false;
+    } else {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 18) {
+            document.getElementById('dobError').textContent = 'You must be at least 18 years old to register';
+            valid = false;
+        }
+    }
+
+    // IA#2: Validate gender
+    if (gender === '') {
+        document.getElementById('genderError').textContent = 'Gender required';
+        valid = false;
+    }
+
+    // IA#2: Validate phone
+    if (phone === '') {
+        document.getElementById('phoneError').textContent = 'Phone number required';
         valid = false;
     }
 
@@ -514,7 +543,7 @@ function validateRegister() {
         valid = false;
     }
 
-    // IA#2: Validate TRN (stored in username field)
+    // IA#2: Validate TRN (stored in username field) with format 000-000-000
     var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
     if (username === '') {
         document.getElementById('usernameError').textContent = 'TRN required';
@@ -524,9 +553,9 @@ function validateRegister() {
         valid = false;
     }
 
-    // IA#2: Validate password length
-    if (password.length < 6) {
-        document.getElementById('passwordError').textContent = 'Password must be 6+ characters';
+    // IA#2: Validate password length (8+ characters)
+    if (password.length < 8) {
+        document.getElementById('passwordError').textContent = 'Password must be 8+ characters';
         valid = false;
     }
 
@@ -541,7 +570,7 @@ function validateRegister() {
         var users = localStorage.getItem('registeredUsers');
         var usersList = users ? JSON.parse(users) : [];
 
-        // Check if TRN already exists there
+        // Check if TRN already exists in registeredUsers
         var exists = false;
         for (var i = 0; i < usersList.length; i++) {
             if (usersList[i].username === username) {
@@ -550,14 +579,26 @@ function validateRegister() {
             }
         }
 
+        // Check if TRN already exists in RegistrationData
+        var regData = getRegistrationData();
+        if (!exists) {
+            for (var j = 0; j < regData.length; j++) {
+                if (regData[j].trn === username) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+
         if (exists) {
             alert('This TRN is already registered!');
             return false;
         }
 
-        // Add new user
+        // Add new user (used by legacy login)
+        var fullName = firstName + ' ' + lastName;
         var newUser = {
-            fullName: name,
+            fullName: fullName,
             dob: dob,
             email: email,
             username: username,   // treat as TRN
@@ -566,20 +607,15 @@ function validateRegister() {
         usersList.push(newUser);
         localStorage.setItem('registeredUsers', JSON.stringify(usersList));
 
-        // add to RegistrationData 
-        var regData = getRegistrationData();
-        var nameParts = name.trim().split(' ');
-        var firstName = nameParts[0] || '';
-        var lastName = nameParts.slice(1).join(' ');
-
+        // Add full registration record to RegistrationData
         var regUser = {
             firstName: firstName,
             lastName: lastName,
             dob: dob,
-            gender: '',                  
-            phone: '',                   
+            gender: gender,
+            phone: phone,
             email: email,
-            trn: username,               
+            trn: username,
             password: password,
             dateRegistered: new Date().toISOString().slice(0, 10),
             cart: [],
@@ -589,11 +625,32 @@ function validateRegister() {
         regData.push(regUser);
         saveRegistrationData(regData);
 
-        alert('Registration successful! Welcome ' + name);
+        alert('Registration successful! Welcome ' + fullName);
         window.location.href = 'login.html';
     }
 
     return false;
+}
+
+function clearRegisterForm() {
+    document.getElementById('firstName').value = '';
+    document.getElementById('lastName').value = '';
+    document.getElementById('dob').value = '';
+    document.getElementById('gender').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+
+    document.getElementById('nameError').textContent = '';
+    document.getElementById('dobError').textContent = '';
+    document.getElementById('genderError').textContent = '';
+    document.getElementById('phoneError').textContent = '';
+    document.getElementById('emailError').textContent = '';
+    document.getElementById('usernameError').textContent = '';
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('confirmError').textContent = '';
 }
 
 
@@ -944,6 +1001,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
