@@ -31,23 +31,16 @@
             <h1>Welcome Back</h1>
             <p>Login to your account</p>
 
-            <form id="loginForm">
-                <label>Tax Registration Number (TRN)</label>
-                <input type="text" id="trn" required placeholder="Enter your TRN (000-000-000)">
-                <span class="error" id="trnError"></span>
+            <form onsubmit="return validateLogin()">
+                <label>TRN</label>
+                <input type="text" id="username" required placeholder="Enter your TRN">
+                <span class="error" id="usernameError"></span>
 
                 <label>Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
                 <span class="error" id="passwordError"></span>
 
-                <p style="text-align: center; margin: 10px 0;">
-                    <a href="#" onclick="resetPassword()">Reset Password</a>
-                </p>
-
-                <div style="display: flex; gap: 15px; margin-top: 25px;">
-                    <button type="button" onclick="clearLoginForm()" style="flex: 1; background: #999;">Cancel</button>
-                    <button type="submit" style="flex: 1;">Login</button>
-                </div>
+                <button type="submit">Login</button>
             </form>
 
             <p style="text-align: center; margin-top: 20px;">
@@ -80,10 +73,9 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        document.getElementById('loginForm').onsubmit = function() {
-            return validateLogin();
-        };
+</body>
+</html>
     </script>
 </body>
 </html>
+
