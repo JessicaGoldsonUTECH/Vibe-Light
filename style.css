@@ -473,8 +473,7 @@ button:hover {
     box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
 }
 
-/* IA#2: Class selector - Error messages */
-.error {
+.form-error {
     color: #d32f2f;
     font-size: 13px;
     display: block;
@@ -622,38 +621,35 @@ table {
    IA#2: CHECKOUT PAGE
    ==================================== */
 
-.checkout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 40px;
+.checkout-summary {
+    background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
+    padding: 60px 20px;
+    margin-top: -20px;
 }
 
-.shipping,
-.summary {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+.checkout-summary .form-box {
+    max-width: 500px;
+    margin: 0 auto;
 }
 
-.shipping h2,
-.summary h2 {
+.checkout-summary h2 {
     color: #6B3410;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    text-align: center;
     font-size: 26px;
     font-weight: 700;
 }
 
-.summary p {
+.checkout-summary p {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
 }
 
-.summary h3 {
+.checkout-summary h3 {
     display: flex;
     justify-content: space-between;
     color: #6B3410;
@@ -664,16 +660,26 @@ table {
     font-weight: 700;
 }
 
-#orderItems {
-    margin-bottom: 30px;
+.security-badge {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    text-align: center;
 }
 
-#orderItems p {
-    padding: 15px;
-    background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
+.badge-icon {
+    font-size: 30px;
     margin-bottom: 10px;
-    border-radius: 8px;
-    font-weight: 500;
+}
+
+.security-badge p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    border: none;
+    padding: 0;
+    display: block;
 }
 
 /* ====================================
