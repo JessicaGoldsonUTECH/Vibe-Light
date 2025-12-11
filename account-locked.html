@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<!-- Navigation (updated version) -->
+<!-- Navigation -->
 <nav>
     <div class="nav-container">
         <div class="logo">
@@ -18,17 +18,13 @@
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="products.html">Products</a></li>
-            <!-- Remove active class from login/register -->
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="invoice-history.html">Invoices</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="about.html">About</a></li>
             <li><a href="login.html">Login</a></li>
             <li><a href="register.html">Register</a></li>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="invoice-history.html">Invoices</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="register.html">Register</a></li>
-            </ul>
+        </ul>
     </div>
 </nav>
 
@@ -40,13 +36,13 @@
             <p>Too many failed login attempts</p>
             
             <div class="locked-message">
-                <p>Your account has been temporarily locked due to multiple failed login attempts.</p>
-                <p>Please reset your password or try again later.</p>
+                <p>Your account has been locked due to 3 failed login attempts.</p>
+                <p>To regain access, please reset your password or contact support.</p>
             </div>
             
             <div class="form-buttons-vertical">
-                <button onclick="resetPassword()" class="btn-primary">Reset Password</button>
-                <button onclick="window.location.href='login.html'" class="btn-secondary">Back to Login</button>
+                <button onclick="window.location.href='reset-password.html'" class="btn-primary">Reset Password</button>
+                <button onclick="clearLoginAttemptsAndReturn()" class="btn-secondary">Try Again</button>
                 <button onclick="window.location.href='index.html'" class="btn-home">Return to Home</button>
             </div>
         </div>
