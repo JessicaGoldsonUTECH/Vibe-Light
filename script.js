@@ -447,8 +447,10 @@ function validateLogin() {
             trn: regUser.trn
         };
         saveCurrentUser();
+        // Clear login attempts on successful login
+        localStorage.removeItem('loginAttempts');
         alert('Login successful! Welcome ' + currentUser.fullName);
-        window.location.href = 'index.html';
+        window.location.href = 'products.html';
         return false;
     }
 
@@ -470,10 +472,23 @@ function validateLogin() {
             trn: foundUser.username // treat as TRN
         };
         saveCurrentUser();
+        // Clear login attempts on successful login
+        localStorage.removeItem('loginAttempts');
         alert('Login successful! Welcome ' + currentUser.username);
-        window.location.href = 'index.html';
+        window.location.href = 'products.html';
     } else {
-        alert('Invalid TRN or password!');
+        // Invalid credentials - increment failed attempt counter
+        var attempts = parseInt(localStorage.getItem('loginAttempts') || '0') + 1;
+        localStorage.setItem('loginAttempts', attempts.toString());
+
+        if (attempts >= 3) {
+            // Redirect to account locked page after 3 failed attempts
+            window.location.href = 'account-locked.html';
+        } else {
+            // Show remaining attempts
+            var attemptsLeft = 3 - attempts;
+            alert('Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.');
+        }
     }
 
     return false;
@@ -489,6 +504,17 @@ function clearLoginForm() {
     if (passwordInput) passwordInput.value = '';
     if (usernameError) usernameError.textContent = '';
     if (passwordError) passwordError.textContent = '';
+}
+
+// Clear login attempts
+function clearLoginAttempts() {
+    localStorage.removeItem('loginAttempts');
+}
+
+// Clear login attempts and redirect to login page
+function clearLoginAttemptsAndReturn() {
+    localStorage.removeItem('loginAttempts');
+    window.location.href = 'login.html';
 }
 
 // IA#2: Validate register form
