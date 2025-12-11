@@ -361,9 +361,13 @@ function validateLogin() {
     document.getElementById('passwordError').textContent = '';
 
     var valid = true;
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
 
     if (trnOrUsername === '') {
         document.getElementById('usernameError').textContent = 'TRN required';
+        valid = false;
+    } else if (!trnPattern.test(trnOrUsername)) {
+        document.getElementById('usernameError').textContent = 'TRN must be in the format 000-000-000';
         valid = false;
     }
     if (password === '') {
@@ -887,6 +891,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
