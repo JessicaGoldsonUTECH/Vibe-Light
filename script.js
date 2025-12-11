@@ -404,7 +404,7 @@ function showCheckout() {
 // IA#2: FORM VALIDATION
 // ===================================
 
-// IA#2: Validate login form with 3-attempt tracking
+// IA#2: Validate login form
 function validateLogin() {
     // Read TRN & password (TRN uses the old username field)
     var trnOrUsername = document.getElementById('username').value;
@@ -447,9 +447,8 @@ function validateLogin() {
             trn: regUser.trn
         };
         saveCurrentUser();
-        clearLoginAttempts();
         alert('Login successful! Welcome ' + currentUser.fullName);
-        window.location.href = 'products.html';
+        window.location.href = 'index.html';
         return false;
     }
 
@@ -471,35 +470,13 @@ function validateLogin() {
             trn: foundUser.username // treat as TRN
         };
         saveCurrentUser();
-        clearLoginAttempts();
         alert('Login successful! Welcome ' + currentUser.username);
-        window.location.href = 'products.html';
+        window.location.href = 'index.html';
     } else {
-        // Increment failed attempt counter
-        var attempts = parseInt(localStorage.getItem('loginAttempts') || '0') + 1;
-        localStorage.setItem('loginAttempts', attempts.toString());
-        
-        if (attempts >= 3) {
-            alert('Too many failed login attempts. Your account is locked.');
-            window.location.href = 'account-locked.html';
-        } else {
-            var remaining = 3 - attempts;
-            document.getElementById('passwordError').textContent = 'Invalid TRN or password! ' + remaining + ' attempt(s) remaining.';
-        }
+        alert('Invalid TRN or password!');
     }
 
     return false;
-}
-
-// Clear login attempts on successful login
-function clearLoginAttempts() {
-    localStorage.removeItem('loginAttempts');
-}
-
-// Clear login attempts and return to login page from account-locked page
-function clearLoginAttemptsAndReturn() {
-    clearLoginAttempts();
-    window.location.href = 'login.html';
 }
 
 function clearLoginForm() {
