@@ -449,7 +449,7 @@ function validateLogin() {
         saveCurrentUser();
         // Clear login attempts on successful login
         localStorage.removeItem('loginAttempts');
-        alert('Login successful! Welcome ' + currentUser.fullName);
+        // Redirect to products page
         window.location.href = 'products.html';
         return false;
     }
@@ -474,7 +474,7 @@ function validateLogin() {
         saveCurrentUser();
         // Clear login attempts on successful login
         localStorage.removeItem('loginAttempts');
-        alert('Login successful! Welcome ' + currentUser.username);
+        // Redirect to products page
         window.location.href = 'products.html';
     } else {
         // Invalid credentials - increment failed attempt counter
@@ -485,9 +485,9 @@ function validateLogin() {
             // Redirect to account locked page after 3 failed attempts
             window.location.href = 'account-locked.html';
         } else {
-            // Show remaining attempts
+            // Show remaining attempts inline in form
             var attemptsLeft = 3 - attempts;
-            alert('Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.');
+            document.getElementById('passwordError').textContent = 'Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.';
         }
     }
 
