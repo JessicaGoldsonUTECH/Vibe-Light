@@ -466,8 +466,12 @@ function validateRegister() {
     }
 
     // IA#2: Validate TRN (stored in username field)
+    var trnPattern = /^\d{3}-\d{3}-\d{3}$/;
     if (username === '') {
         document.getElementById('usernameError').textContent = 'TRN required';
+        valid = false;
+    } else if (!trnPattern.test(username)) {
+        document.getElementById('usernameError').textContent = 'TRN must be in the format 000-000-000';
         valid = false;
     }
 
@@ -891,6 +895,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
