@@ -836,7 +836,68 @@ function processCheckout() {
     var city = document.getElementById('shippingCity').value;
     var postal = document.getElementById('postalCode').value;
     var paymentMethod = document.getElementById('paymentMethod').value;
-    var amount = parseFloat(document.getElementById('amountPaid').value);
+    var amountInput = document.getElementById('amountPaid').value;
+    var amount = parseFloat(amountInput);
+
+    // Payment‑method specific fields
+    var cardNumberEl = document.getElementById('cardNumber');
+    var cardholderNameEl = document.getElementById('cardholderName');
+    var expiryDateEl = document.getElementById('expiryDate');
+    var cvvEl = document.getElementById('cvv');
+    var paypalEmailEl = document.getElementById('paypalEmail');
+    var paypalPasswordEl = document.getElementById('paypalPassword');
+
+    // Basic payment method validation
+    if (!paymentMethod) {
+        alert('Please select a payment method.');
+        return false;
+    }
+
+    // Card (credit/debit) validation
+    if (paymentMethod === 'credit' || paymentMethod === 'debit') {
+        var cardNumber = cardNumberEl ? cardNumberEl.value.replace(/\s/g, '') : '';
+        var cardholderName = cardholderNameEl ? cardholderNameEl.value.trim() : '';
+        var expiryDate = expiryDateEl ? expiryDateEl.value.trim() : '';
+        var cvv = cvvEl ? cvvEl.value.trim() : '';
+
+        if (!/^\d{16}$/.test(cardNumber)) {
+            alert('Please enter a valid 16-digit card number.');
+            return false;
+        }
+        if (!cardholderName) {
+            alert('Please enter the cardholder name.');
+            return false;
+        }
+        if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+            alert('Please enter expiry date in the format MM/YY.');
+            return false;
+        }
+        if (!/^\d{3}$/.test(cvv)) {
+            alert('Please enter a valid 3-digit CVV.');
+            return false;
+        }
+    }
+
+    // PayPal validation
+    if (paymentMethod === 'paypal') {
+        var paypalEmail = paypalEmailEl ? paypalEmailEl.value.trim() : '';
+        var paypalPassword = paypalPasswordEl ? paypalPasswordEl.value.trim() : '';
+
+        if (!paypalEmail) {
+            alert('Please enter your PayPal email.');
+            return false;
+        }
+        if (!paypalPassword) {
+            alert('Please enter your PayPal password.');
+            return false;
+        }
+    }
+
+    // Validate amount
+    if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount being paid.');
+        return false;
+    }
     
     // IA#2: Get total
     var totalText = document.getElementById('checkoutTotal').textContent;
@@ -884,18 +945,18 @@ function processCheckout() {
         // Save invoice first
         invoices.push(invoice);
         if (currentUser && currentUser.trn) {
-        var regData = getRegistrationData();
-        for (var r = 0; r < regData.length; r++) {
-            if (regData[r].trn === currentUser.trn) {
-                if (!Array.isArray(regData[r].invoices)) {
-                    regData[r].invoices = [];
+            var regData = getRegistrationData();
+            for (var r = 0; r < regData.length; r++) {
+                if (regData[r].trn === currentUser.trn) {
+                    if (!Array.isArray(regData[r].invoices)) {
+                        regData[r].invoices = [];
+                    }
+                    regData[r].invoices.push(invoice);
+                    saveRegistrationData(regData);
+                    break;
                 }
-                regData[r].invoices.push(invoice);
-                saveRegistrationData(regData);
-                break;
             }
         }
-    }
         saveInvoices();
         
         // IMPORTANT: Clear cart immediately after saving invoice
@@ -1107,11 +1168,19 @@ function ShowUserFrequency() {
 }
 
 // Show all stored invoices or filter by TRN/username
+
 function ShowInvoices(showAll) {
     var tbody = document.getElementById('invoiceTableBody');
     if (!tbody) return;
 
-    var allInv = getAllInvoices() || [];
+    // Only allow logged-in users to see/search invoices
+    if (!currentUser) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Please login to view your invoices</td></tr>';
+        return;
+    }
+
+    // Restrict to the current user's invoices only
+    var allInv = GetUserInvoices() || [];
     var input = document.getElementById('searchTrn');
     var rawQuery = input ? input.value.trim() : '';
     var normalizedQuery = rawQuery.replace(/\D/g, ''); // remove non-digits for TRN matching
@@ -1132,7 +1201,7 @@ function ShowInvoices(showAll) {
                 // nothing to search for and not asking for all => skip
                 show = false;
             } else {
-                // check several candidate TRN/username fields
+                // check several candidate TRN/username fields (still within the current user's invoices)
                 var candidates = [inv.trn, inv.username];
                 // also consider username stored inside customer object (if present)
                 if (inv.customer && inv.customer.trn) candidates.push(inv.customer.trn);
@@ -1196,6 +1265,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
