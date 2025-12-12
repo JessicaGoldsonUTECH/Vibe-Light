@@ -33,21 +33,21 @@
 
     <hr style="margin: 40px 0;">
 
-    <div class="admin-search">
-        <h2>Search Invoices by TRN</h2>
-        <p style="font-size: 14px; color: #666;">
-            Enter a customer's TRN to view all invoices stored in <code>AllInvoices</code>.
-        </p>
+<div class="admin-search">
+    <h2>Search My Invoices</h2>
+    <p style="font-size: 14px; color: #666;">
+        Enter your TRN to search within your own invoices.
+    </p>
 
-        <div style="display: flex; gap: 10px; margin-bottom: 15px; max-width: 400px;">
-            <input type="text" id="searchTrn"
-                   placeholder="Enter TRN e.g. 123-456-789"
-                   style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-            <button onclick="ShowInvoices(false)" style="padding: 8px 16px;">Search</button>
-            <button onclick="ShowInvoices(true)" style="padding: 8px 16px; background: #777; color: #fff;">
-                Show All
-            </button>
-        </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; max-width: 400px;">
+        <input type="text" id="searchTrn"
+               placeholder="Enter your TRN e.g. 123-456-789"
+               style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+        <button onclick="ShowInvoices(false)" style="padding: 8px 16px;">Search</button>
+        <button onclick="ShowInvoices(true)" style="padding: 8px 16px; background: #777; color: #fff;">
+            Show All
+        </button>
+    </div>
 
         <div style="overflow-x: auto;">
             <table class="admin-table">
@@ -162,3 +162,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
