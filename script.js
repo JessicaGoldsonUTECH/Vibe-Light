@@ -430,6 +430,9 @@ function validateLogin() {
 
     if (!valid) return false;
 
+    // Per-TRN attempts key so each person gets their own 3 tries
+    var attemptsKey = 'loginAttempts_' + trnOrUsername;
+
     var regData = getRegistrationData();
     var regUser = null;
     for (var i = 0; i < regData.length; i++) {
@@ -447,8 +450,8 @@ function validateLogin() {
             trn: regUser.trn
         };
         saveCurrentUser();
-        // Clear login attempts on successful login
-        localStorage.removeItem('loginAttempts');
+        // Clear login attempts on successful login for this TRN
+        localStorage.removeItem(attemptsKey);
         // Redirect to products page
         window.location.href = 'products.html';
         return false;
@@ -472,14 +475,14 @@ function validateLogin() {
             trn: foundUser.username // treat as TRN
         };
         saveCurrentUser();
-        // Clear login attempts on successful login
-        localStorage.removeItem('loginAttempts');
+        // Clear login attempts on successful login for this TRN
+        localStorage.removeItem(attemptsKey);
         // Redirect to products page
         window.location.href = 'products.html';
     } else {
-        // Invalid credentials - increment failed attempt counter
-        var attempts = parseInt(localStorage.getItem('loginAttempts') || '0') + 1;
-        localStorage.setItem('loginAttempts', attempts.toString());
+        // Invalid credentials - increment failed attempt counter for this TRN
+        var attempts = parseInt(localStorage.getItem(attemptsKey) || '0') + 1;
+        localStorage.setItem(attemptsKey, attempts.toString());
 
         if (attempts >= 3) {
             // Redirect to account locked page after 3 failed attempts
@@ -487,7 +490,8 @@ function validateLogin() {
         } else {
             // Show remaining attempts inline in form
             var attemptsLeft = 3 - attempts;
-            document.getElementById('passwordError').textContent = 'Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.';
+            document.getElementById('passwordError').textContent =
+                'Invalid TRN or password! ' + attemptsLeft + ' attempt(s) remaining.';
         }
     }
 
@@ -508,12 +512,18 @@ function clearLoginForm() {
 
 // Clear login attempts
 function clearLoginAttempts() {
-    localStorage.removeItem('loginAttempts');
+    // Remove all keys that track login attempts per TRN
+    for (var i = localStorage.length - 1; i >= 0; i--) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf('loginAttempts_') === 0) {
+            localStorage.removeItem(key);
+        }
+    }
 }
 
 // Clear login attempts and redirect to login page
 function clearLoginAttemptsAndReturn() {
-    localStorage.removeItem('loginAttempts');
+    clearLoginAttempts();
     window.location.href = 'login.html';
 }
 
@@ -1186,6 +1196,7 @@ function cancelCheckout() {
         window.location.href = 'cart.html';
     }
 }
+
 
 
 
